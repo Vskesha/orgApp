@@ -1,0 +1,3 @@
+"""
+Directions for making project
+"""
