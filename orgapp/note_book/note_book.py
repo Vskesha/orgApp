@@ -5,91 +5,45 @@
 додайте відповідні команди до COMMANDS і реалізуйте відповідні handler
 Хендлер приймає строку (все, що введено в консолі після назви команди) і повертає строку
 """
-from functools import wraps
-import json
 
-# Клас для представлення нотаток
-class Note:
-    def __init__(self, title, content):
-        self.title = title
-        self.content = content
+from functools import wraps 
+from classes_nb import NoteManager  # Імпорт класу NoteManager з іншого файлу
+from classes_nb import Note
 
-# Клас для управління нотатками
-class NoteManager:
-    def __init__(self):
-        self.notes = []
-
-    def add_note(self, title, content):
-        note = Note(title, content)
-        self.notes.append(note)
-
-    def save_notes_to_json(self, filename):
-        data = []
-        for note in self.notes:
-            data.append({
-                "title": note.title,
-                "content": note.content
-            })
-
-        with open(filename, 'w', encoding="utf-8") as file:
-            json.dump(data, file, ensure_ascii=False)
-
-    def load_notes_from_json(self, filename):
-        try:
-            with open(filename, 'r', encoding="utf-8") as file:
-                data = json.load(file)
-                self.notes = []
-                for note_data in data:
-                    self.add_note(note_data["title"], note_data["content"])
-        except FileNotFoundError:
-            pass
-
-    def search_notes(self, keyword):
-        results = []
-        for note in self.notes:
-            if keyword in note.title or keyword in note.content:
-                results.append(note)
-        return results
-
-# Функція-хендлер для додавання нотатки
-def add_note_handler(note_manager, args):
-    title = input("Введіть заголовок нотатки: ")
-    content = input("Введіть текст нотатки: ")
+def add_note_handler(note_manager, argument):
+    title = input("Enter note title: ")
+    content = input("Enter note text: ")
     note_manager.add_note(title, content)
-    return "Нотатка додана успішно."
+    return "Note added successfully."
 
-# Функція-хендлер для збереження нотаток в JSON-файл
 def save_notes_handler(note_manager, args):
-    filename = args[0] if args else input("Введіть ім'я файлу для збереження: ")
+    filename = args[0] if args else input("Enter the filename to save: ")
     note_manager.save_notes_to_json(filename)
-    return f"Нотатки збережено в файлі {filename}"
+    return f"Notes saved to {filename}"
 
-# Функція-хендлер для завантаження нотаток з JSON-файлу
 def load_notes_handler(note_manager, args):
-    filename = args[0] if args else input("Введіть ім'я файлу для завантаження: ")
+    filename = args[0] if args else input("Enter the filename to load: ")
     note_manager.load_notes_from_json(filename)
-    return f"Нотатки завантажено з файлу {filename}"
+    return f"Notes loaded from {filename}"
 
-# Функція-хендлер для пошуку нотаток
 def search_notes_handler(note_manager, args):
-    keyword = args[0] if args else input("Введіть ключове слово для пошуку: ")
+    keyword = args[0] if args else input("Enter a keyword to search: ")
     search_results = note_manager.search_notes(keyword)
     if search_results:
-        result_str = "Результати пошуку:\n"
+        result_str = "Search results:\n"
         for idx, result in enumerate(search_results, 1):
-            result_str += f"{idx}. Заголовок: {result.title}\n"
-            result_str += f"   Текст: {result.content}\n"
+            result_str += f"{idx}. Title: {result.title}\n"
+            result_str += f"   Text: {result.content}\n"
         return result_str
     else:
-        return "Нотатки не знайдено за цим ключовим словом."
+        return "No notes found for this keyword."
 
-# Функція-хендлер для виходу
 def exit_handler(note_manager, args):
-    filename = args[0] if args else input("Введіть ім'я файлу для збереження: ")
+    filename = args[0] if args else input("Enter the filename to save: ")
     note_manager.save_notes_to_json(filename)
     return 'Goodbye!'
 
-# Карта команд і відповідних їм функцій-хендлерів
+# Map of commands and their corresponding handler functions
 COMMANDS = {
     'add': add_note_handler,
     'save': save_notes_handler,
@@ -101,9 +55,9 @@ COMMANDS = {
     'goodbye': exit_handler,
 }
 
-# Обробник помилок для введення
+# Input error handler
 def input_error(func):
-    """Обгортка для обробки помилок"""
+    """Wrapper for handling errors"""
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -119,13 +73,13 @@ def input_error(func):
             print('Wrong type of value.', str(e))
     return wrapper
 
-# Парсер команд для отримання відповідного обробника і аргумента
+# Command parser to get the appropriate handler and argument
 def command_parser(user_input: str) -> tuple[callable, str]:
     """
-    Вибирає і повертає відповідний обробник та аргумент цього обробника
-    з user_input відповідно до COMMANDS
-    :param user_input: Рядок, який повинен починатися з команди, за якою може слідувати ім'я та номер телефону, якщо потрібно
-    :return: Кортеж функції та аргумента рядка
+    Selects and returns the appropriate handler and its argument
+    from user_input according to COMMANDS
+    :param user_input: The string that should start with a command, followed by a name and phone number if needed
+    :return: Tuple of function and string argument
     """
     if not user_input:
         raise IndexError("Nothing was entered ...")
@@ -138,46 +92,43 @@ def command_parser(user_input: str) -> tuple[callable, str]:
             data = user_input[len(command):].strip()
 
     if not func:
-        return None, data  # Повертаємо None для обробки "Команда не існує"
+        return None, data  # Return None to handle "Command does not exist"
 
     return func, data
 
-# Функція для виведення меню з командами
 def print_menu():
-    print("Доступні команди:")
+    print("Available commands:")
     for command in COMMANDS:
         print(f"- {command}")
 
-# Підготовка до запуску програми
 def prepare() -> None:
     """
-    Виводить початкову інформацію користувачеві
+    Displays initial information to the user
     :return: None
     """
-    print("Ласкаво просимо до вашого нотатникового застосунку!")
-    print_menu()  # Виводимо меню з командами
+    print("Welcome to your note-taking app!")
+    print_menu()  # Display the menu with commands
 
-# Основна функція програми
+# Main program function
 def main_cycle(note_manager, filename) -> bool:
     """
-    Повертає True, якщо потрібно завершити програму. False в іншому випадку.
+    Returns True if the program should exit. False otherwise.
     """
     user_input = input('>>> ')
     func, argument = command_parser(user_input)
     if func is None:
-        print("Команда не існує")
+        print("Command does not exist")
         return False
     result = func(note_manager, argument)
     print(result)
     return result.endswith('Goodbye!')
 
-# Початкова ініціалізація
+# Initial initialization
 if __name__ == '__main__':
-    filename = "my_notes.json"  # Ім'я файлу для збереження нотаток
-    note_manager = NoteManager()  # Створення об'єкту для управління нотатками
-    note_manager.load_notes_from_json(filename)  # Завантаження нотаток з файлу
-    prepare()  # Виведення початкової інформації
+    filename = "my_notes.json"  # Filename for saving notes
+    note_manager = NoteManager()  # Create an object to manage notes
+    note_manager.load_notes_from_json(filename)  # Load notes from file
+    prepare()  # Display initial information to the user
     while True:
         if main_cycle(note_manager, filename):
             break
-
