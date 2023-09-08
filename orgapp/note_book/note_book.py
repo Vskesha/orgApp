@@ -5,52 +5,21 @@
 додайте відповідні команди до COMMANDS і реалізуйте відповідні handler
 Хендлер приймає строку (все, що введено в консолі після назви команди) і повертає строку
 """
-from functools import wraps
-
-
 # зразок хендлера
 # def handle_add_number(user_input: str) -> str:
-#     """
-#     adds name and phone number from given 'user_input' to PHONEBOOK.
-#     :returns: str with the result of adding.
-#     :raises: errors if given 'user_input' has no relevant arguments
-#     """
+#     """adds name and phone number"""
 
-def handle_exit():
-    """
-    Makes actions for closing the program (saving data, etc)
-    :return: str with 'Goodbye'
-    """
-    return 'Goodbye!'
+from functools import wraps
+
+from functools import wraps
+from classes_nb import NoteManager
+from classes_nb import Note
+from pathlib import Path
 
 
-COMMANDS = {
-    'goodbye': handle_exit,
-    'close': handle_exit,
-    'exit': handle_exit,
-    'bye': handle_exit,
-    # 'add_note': add_note_handler
-    # де ключі це команди з консолі, а значення це функції хендлери
-    #
-}
-
-
-def input_error(func):
-    """Wrapper for handling errors"""
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            result = func(*args, **kwargs)
-            return result
-        except IndexError as e:
-            print('Not enough data.', str(e))
-        except ValueError as e:
-            print('Wrong value.', str(e))
-        except KeyError as e:
-            print('Wrong key.', str(e)[1:-1])
-        except TypeError as e:
-            print('Wrong type of value.', str(e))
-    return wrapper
+FILE_PATH = Path.home() / 'orgApp' / 'notes.json'  # for working on different filesystems
+FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+NOTE_MANAGER = NoteManager.load_notes_from_json(str(FILE_PATH))  # Create an object to manage notes from file
 
 
 def command_parser(user_input: str) -> tuple[callable, str]:
@@ -76,6 +45,75 @@ def command_parser(user_input: str) -> tuple[callable, str]:
     return func, data
 
 
+def handle_add_note(args: str):
+    """adds note to your NoteBook"""
+    title = input("Enter note title: ")
+    content = input("Enter note text: ")
+    NOTE_MANAGER.add_note(title, content)
+    return "Note added successfully."
+
+
+def handle_exit(args: str):
+    """exits the program"""
+    return handle_save_notes('') + '\nGoodbye!'
+
+
+def handle_load_notes(args: str):
+    """loads notes from the given file"""
+    filename = args if args else input("Enter the filename to load: ")
+    new_notes = NoteManager.load_notes_from_json(filename)
+    NOTE_MANAGER.add_notes(new_notes)
+    return f"Notes loaded from {filename}"
+
+
+def handle_save_notes(args: str):
+    """saves notes to file"""
+    NOTE_MANAGER.save_notes_to_json(str(FILE_PATH))
+    return f"Notes saved to {str(FILE_PATH)}"
+
+
+def handle_search_notes(args: str):
+    """returns notes with given keyword"""
+    keyword = args[0] if args else input("Enter a keyword to search: ")
+    search_results = NOTE_MANAGER.search_notes(keyword)
+    if search_results:
+        result_str = "Search results:\n"
+        for idx, result in enumerate(search_results, 1):
+            result_str += f"{idx}. Title: {result.title}\n"
+            result_str += f"   Text: {result.content}\n"
+        return result_str
+    else:
+        return "No notes found for this keyword."
+
+
+def input_error(func):
+    """
+    A decorator wrapper for error handling.
+
+    Args:
+        func (callable): The function to wrap with error handling.
+
+    Returns:
+        callable: The wrapped function with error handling.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+            return result
+        except IndexError as e:
+            print('Not enough data.', str(e))
+        except ValueError as e:
+            print('Wrong value.', str(e))
+        except KeyError as e:
+            print('Wrong key.', str(e)[1:-1])
+        except TypeError as e:
+            print('Wrong type of value.', str(e))
+        except FileNotFoundError as e:
+            print(e)
+    return wrapper
+
+
 @input_error
 def main_cycle() -> bool:
     """
@@ -88,19 +126,41 @@ def main_cycle() -> bool:
     return result.endswith('Goodbye!')
 
 
-def prepare() -> None:
-    """
-    Prints initial information to user
-    :return: None
-    """
-    pass
-
-
 def main():
     prepare()
     while True:
         if main_cycle():
             break
+
+
+def prepare() -> None:
+    """
+    Displays initial information to the user
+    :return: None
+    """
+    print("Welcome to your note-taking app!")
+    print_menu()  # Display the menu with commands
+
+
+def print_menu():
+    print("Available commands:")
+    for command, func in COMMANDS.items():
+        print(f"- {command:-<10} {func.__doc__}")
+
+
+# Map of commands and their corresponding handler functions
+COMMANDS = {
+    'add': handle_add_note,
+    'plus': handle_add_note,
+    'save': handle_save_notes,
+    'load': handle_load_notes,
+    'search': handle_search_notes,
+    'find': handle_search_notes,
+    'exit': handle_exit,
+    'close': handle_exit,
+    'bye': handle_exit,
+    'goodbye': handle_exit,
+}
 
 
 if __name__ == '__main__':
