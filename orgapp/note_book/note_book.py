@@ -86,6 +86,17 @@ def handle_search_notes(args: str):
         return "No notes found for this keyword."
 
 
+def handle_view_all_notes(args: str):
+    """ Display all notes."""
+    all_notes = NOTE_MANAGER.get_all_notes()
+    if all_notes:
+        result_str = "All notes:\n"
+        for idx, note in enumerate(all_notes, 1):
+            result_str += f"{idx}. Title: {note.title}\nContent: {note.content}\n"
+        return result_str
+    else:
+        return "Нотаток немає."
+
 def input_error(func):
     """
     A decorator wrapper for error handling.
@@ -154,6 +165,7 @@ COMMANDS = {
     'plus': handle_add_note,
     'save': handle_save_notes,
     'load': handle_load_notes,
+    'view_all_notes': handle_view_all_notes,
     'search': handle_search_notes,
     'find': handle_search_notes,
     'exit': handle_exit,
