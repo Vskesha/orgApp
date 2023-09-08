@@ -21,9 +21,7 @@ class Note:
         self.title = title
         self.content = content
     
-    # def get_all_notes(self):
-    #     """ Returns a list of all notes."""
-    #     return self.notes
+     
 
 class NoteManager:
     """Manages a collection of notes."""
