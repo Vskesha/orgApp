@@ -6,29 +6,71 @@
 Хендлер приймає строку (все, що введено в консолі після назви команди) і повертає строку
 """
 
-from functools import wraps 
-from classes_nb import NoteManager  # Імпорт класу NoteManager з іншого файлу
+from functools import wraps
+from classes_nb import NoteManager
 from classes_nb import Note
+from pathlib import Path
 
-def add_note_handler(note_manager, argument):
+
+FILE_PATH = Path.home() / 'orgApp' / 'notes.json'  # for working on different filesystems
+FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+NOTE_MANAGER = NoteManager.load_notes_from_json(str(FILE_PATH))  # Create an object to manage notes from file
+
+
+def command_parser(user_input: str) -> tuple[callable, str]:
+    """
+    fetches and returns proper handler and argument of this handler
+    from user_input accordingly to the COMMANDS
+    :param user_input: str which must start with command followed by name and phone number if needed
+    :return: tuple of function and str argument
+    """
+    if not user_input:
+        raise IndexError("Nothing was entered ...")
+
+    func, data = None, []
+    lower_input_end_spaced = user_input.lower() + ' '
+    for command in COMMANDS:
+        if lower_input_end_spaced.startswith(command + ' '):
+            func = COMMANDS[command]
+            data = user_input[len(command) + 1:].strip()
+
+    if not func:
+        raise ValueError(f"There is no such command {user_input.split()[0]}")
+
+    return func, data
+
+
+def handle_add_note(args: str):
+    """adds note to your NoteBook"""
     title = input("Enter note title: ")
     content = input("Enter note text: ")
-    note_manager.add_note(title, content)
+    NOTE_MANAGER.add_note(title, content)
     return "Note added successfully."
 
-def save_notes_handler(note_manager, args):
-    filename = args[0] if args else input("Enter the filename to save: ")
-    note_manager.save_notes_to_json(filename)
-    return f"Notes saved to {filename}"
 
-def load_notes_handler(note_manager, args):
-    filename = args[0] if args else input("Enter the filename to load: ")
-    note_manager.load_notes_from_json(filename)
+def handle_exit(args: str):
+    """exits the program"""
+    return handle_save_notes('') + '\nGoodbye!'
+
+
+def handle_load_notes(args: str):
+    """loads notes from the given file"""
+    filename = args if args else input("Enter the filename to load: ")
+    new_notes = NoteManager.load_notes_from_json(filename)
+    NOTE_MANAGER.add_notes(new_notes)
     return f"Notes loaded from {filename}"
 
-def search_notes_handler(note_manager, args):
+
+def handle_save_notes(args: str):
+    """saves notes to file"""
+    NOTE_MANAGER.save_notes_to_json(str(FILE_PATH))
+    return f"Notes saved to {str(FILE_PATH)}"
+
+
+def handle_search_notes(args: str):
+    """returns notes with given keyword"""
     keyword = args[0] if args else input("Enter a keyword to search: ")
-    search_results = note_manager.search_notes(keyword)
+    search_results = NOTE_MANAGER.search_notes(keyword)
     if search_results:
         result_str = "Search results:\n"
         for idx, result in enumerate(search_results, 1):
@@ -38,26 +80,17 @@ def search_notes_handler(note_manager, args):
     else:
         return "No notes found for this keyword."
 
-def exit_handler(note_manager, args):
-    filename = args[0] if args else input("Enter the filename to save: ")
-    note_manager.save_notes_to_json(filename)
-    return 'Goodbye!'
 
-# Map of commands and their corresponding handler functions
-COMMANDS = {
-    'add': add_note_handler,
-    'save': save_notes_handler,
-    'load': load_notes_handler,
-    'search': search_notes_handler,
-    'exit': exit_handler,
-    'close': exit_handler,
-    'bye': exit_handler,
-    'goodbye': exit_handler,
-}
-
-# Input error handler
 def input_error(func):
-    """Wrapper for handling errors"""
+    """
+    A decorator wrapper for error handling.
+
+    Args:
+        func (callable): The function to wrap with error handling.
+
+    Returns:
+        callable: The wrapped function with error handling.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -71,35 +104,29 @@ def input_error(func):
             print('Wrong key.', str(e)[1:-1])
         except TypeError as e:
             print('Wrong type of value.', str(e))
+        except FileNotFoundError as e:
+            print(e)
     return wrapper
 
-# Command parser to get the appropriate handler and argument
-def command_parser(user_input: str) -> tuple[callable, str]:
+
+@input_error
+def main_cycle() -> bool:
     """
-    Selects and returns the appropriate handler and its argument
-    from user_input according to COMMANDS
-    :param user_input: The string that should start with a command, followed by a name and phone number if needed
-    :return: Tuple of function and string argument
+    return True if it needs to stop program. False otherwise.
     """
-    if not user_input:
-        raise IndexError("Nothing was entered ...")
+    user_input = input('>>> ')
+    func, argument = command_parser(user_input)
+    result = func(argument)
+    print(result)
+    return result.endswith('Goodbye!')
 
-    func, data = None, []
-    lower_input_end_spaced = user_input.lower() + ' '
-    for command in COMMANDS:
-        if lower_input_end_spaced.startswith(command.lower() + ' '):
-            func = COMMANDS[command]
-            data = user_input[len(command):].strip()
 
-    if not func:
-        return None, data  # Return None to handle "Command does not exist"
+def main():
+    prepare()
+    while True:
+        if main_cycle():
+            break
 
-    return func, data
-
-def print_menu():
-    print("Available commands:")
-    for command in COMMANDS:
-        print(f"- {command}")
 
 def prepare() -> None:
     """
@@ -109,26 +136,27 @@ def prepare() -> None:
     print("Welcome to your note-taking app!")
     print_menu()  # Display the menu with commands
 
-# Main program function
-def main_cycle(note_manager, filename) -> bool:
-    """
-    Returns True if the program should exit. False otherwise.
-    """
-    user_input = input('>>> ')
-    func, argument = command_parser(user_input)
-    if func is None:
-        print("Command does not exist")
-        return False
-    result = func(note_manager, argument)
-    print(result)
-    return result.endswith('Goodbye!')
 
-# Initial initialization
+def print_menu():
+    print("Available commands:")
+    for command, func in COMMANDS.items():
+        print(f"- {command:-<10} {func.__doc__}")
+
+
+# Map of commands and their corresponding handler functions
+COMMANDS = {
+    'add': handle_add_note,
+    'plus': handle_add_note,
+    'save': handle_save_notes,
+    'load': handle_load_notes,
+    'search': handle_search_notes,
+    'find': handle_search_notes,
+    'exit': handle_exit,
+    'close': handle_exit,
+    'bye': handle_exit,
+    'goodbye': handle_exit,
+}
+
+
 if __name__ == '__main__':
-    filename = "my_notes.json"  # Filename for saving notes
-    note_manager = NoteManager()  # Create an object to manage notes
-    note_manager.load_notes_from_json(filename)  # Load notes from file
-    prepare()  # Display initial information to the user
-    while True:
-        if main_cycle(note_manager, filename):
-            break
+    main()

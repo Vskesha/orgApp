@@ -4,18 +4,13 @@
 По можливості додавайте typehints для методів класу і докстрінги (якщо не знаєте що це
 то скидайте як є і потім якось доробимо)
 """
- 
-
-
-FILE_NAME = ''  # for saving data
-
 import json
 from functools import wraps
 
 class Note:
     """Represents a note with a title and content."""
 
-    def __init__(self, title, content):
+    def __init__(self, title: str, content: str):
         """
         Initializes a new Note.
 
@@ -33,7 +28,7 @@ class NoteManager:
         """Initializes a new NoteManager with an empty list of notes."""
         self.notes = []
 
-    def add_note(self, title, content):
+    def add_note(self, title: str, content: str):
         """
         Adds a new note to the collection.
 
@@ -44,7 +39,10 @@ class NoteManager:
         note = Note(title, content)
         self.notes.append(note)
 
-    def save_notes_to_json(self, filename):
+    def add_notes(self, other):
+        self.notes += other.notes
+
+    def save_notes_to_json(self, filename: str):
         """
         Saves the notes to a JSON file.
 
@@ -59,25 +57,28 @@ class NoteManager:
             })
 
         with open(filename, 'w', encoding="utf-8") as file:
-            json.dump(data, file, ensure_ascii=False)
+            json.dump(data, file, ensure_ascii=False, indent=4)
 
-    def load_notes_from_json(self, filename):
+    @classmethod
+    def load_notes_from_json(cls, filename: str):
         """
         Loads notes from a JSON file and replaces the current collection.
-
+        returns NoteManager object
         Args:
             filename (str): The name of the JSON file to load notes from.
         """
+        new_note_book = NoteManager()
         try:
             with open(filename, 'r', encoding="utf-8") as file:
                 data = json.load(file)
-                self.notes = []
                 for note_data in data:
-                    self.add_note(note_data["title"], note_data["content"])
+                    new_note_book.add_note(note_data["title"], note_data["content"])
         except FileNotFoundError:
             pass
 
-    def search_notes(self, keyword):
+        return new_note_book
+
+    def search_notes(self, keyword: str):
         """
         Searches for notes containing a specific keyword.
 
@@ -92,28 +93,3 @@ class NoteManager:
             if keyword in note.title or keyword in note.content:
                 results.append(note)
         return results
-
-def input_error(func):
-    """
-    A decorator wrapper for error handling.
-
-    Args:
-        func (callable): The function to wrap with error handling.
-
-    Returns:
-        callable: The wrapped function with error handling.
-    """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            result = func(*args, **kwargs)
-            return result
-        except IndexError as e:
-            print('Not enough data.', str(e))
-        except ValueError as e:
-            print('Wrong value.', str(e))
-        except KeyError as e:
-            print('Wrong key.', str(e)[1:-1])
-        except TypeError as e:
-            print('Wrong type of value.', str(e))
-    return wrapper
