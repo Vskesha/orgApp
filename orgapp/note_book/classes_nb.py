@@ -41,24 +41,10 @@ class NoteManager:
         self.notes.append(note)
 
     def add_notes(self, other):
-        self.notes += other.notes
-
-    def save_notes_to_json(self, filename: str):
         """
-        Saves the notes to a JSON file.
-
-        Args:
-            filename (str): The name of the JSON file to save the notes to.
+        Extends self.notes with notes from other NoteManager object
         """
-        data = []
-        for note in self.notes:
-            data.append({
-                "title": note.title,
-                "content": note.content
-            })
-
-        with open(filename, 'w', encoding="utf-8") as file:
-            json.dump(data, file, ensure_ascii=False, indent=4)
+        self.notes.extend(other.notes)
 
     @classmethod
     def load_notes_from_json(cls, filename: str):
@@ -78,6 +64,23 @@ class NoteManager:
             pass
 
         return new_note_book
+
+    def save_notes_to_json(self, filename: str):
+        """
+        Saves the notes to a JSON file.
+
+        Args:
+            filename (str): The name of the JSON file to save the notes to.
+        """
+        data = []
+        for note in self.notes:
+            data.append({
+                "title": note.title,
+                "content": note.content
+            })
+
+        with open(filename, 'w', encoding="utf-8") as file:
+            json.dump(data, file, ensure_ascii=False, indent=4)
 
     def search_notes(self, keyword: str):
         """
