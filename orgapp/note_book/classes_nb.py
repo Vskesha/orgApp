@@ -13,6 +13,13 @@ class Note:
     def __init__(self, title: str, content: str):
         """
         Initializes a new Note.
+        
+        Args:
+            title (str): The title of the note.
+            content (str): The content of the note.
+        """
+        self.title = title
+        self.content = content
 
 
 class NoteManager:
