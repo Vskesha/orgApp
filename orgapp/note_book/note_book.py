@@ -145,7 +145,7 @@ def prepare() -> None:
 def print_menu():
     print("Available commands:")
     for command, func in COMMANDS.items():
-        print(f"- {command:<10} {func.__doc__}")
+        print(f"- {command: <10} {func.__doc__}")
 
 
 # Map of commands and their corresponding handler functions
