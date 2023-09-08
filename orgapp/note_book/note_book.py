@@ -5,6 +5,11 @@
 додайте відповідні команди до COMMANDS і реалізуйте відповідні handler
 Хендлер приймає строку (все, що введено в консолі після назви команди) і повертає строку
 """
+# зразок хендлера
+# def handle_add_number(user_input: str) -> str:
+#     """adds name and phone number"""
+
+from functools import wraps
 
 from functools import wraps
 from classes_nb import NoteManager
