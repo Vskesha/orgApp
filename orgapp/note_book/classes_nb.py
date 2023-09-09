@@ -14,8 +14,8 @@ class Note:
         """
         self.title = title
         self.content = content
-
-
+    
+     
 class NoteManager:
     """Manages a collection of notes."""
 
