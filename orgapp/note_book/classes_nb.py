@@ -11,7 +11,7 @@ from functools import wraps
 class Note:
     """Represents a note with a title and content."""
 
-    def __init__(self, title: str, content: str, tags: str = ""):
+    def __init__(self, title: str, content: str, tags: list = None):
         """
         Initializes a new Note.
 
@@ -22,7 +22,7 @@ class Note:
         """
         self.title = title
         self.content = content
-        self.tags = [tags] if tags else []
+        self.tags = tags if tags else []
 
 
 class NoteManager:
@@ -32,7 +32,7 @@ class NoteManager:
         """Initializes a new NoteManager with an empty list of notes."""
         self.notes = []
 
-    def add_note(self, title: str, content: str):
+    def add_note(self, title: str, content: str, tags:list = None):
         """
         Adds a new note to the collection.
 
@@ -40,7 +40,7 @@ class NoteManager:
             title (str): The title of the note.
             content (str): The content of the note.
         """
-        note = Note(title, content)
+        note = Note(title, content, tags)
         self.notes.append(note)
 
     def add_notes(self, other):
@@ -49,33 +49,49 @@ class NoteManager:
         """
         self.notes.extend(other.notes)
 
-    def delete_note(self, title: str):
+    def add_tag_to_note(self, title, tag):
         """
-        Delete the record found by the title.
+        Adds the tag to the note found by title.
 
         Args:
-            title (str): The title of note
+            title (str): The title of the note.
+            tag (str): The tag of the note.
+        """        
+        
+        for note in self.notes:
+            if note.title == title:
+                note.tags.append(tag)
+                return True
+        return False
+
+    def delete_note(self, title: str):
+        """
+        Deletes the note found by title.
+
+        Args:
+            title (str): The title of the note.
         """
 
-        result = False
         for note in self.notes:
             if note.title == title:
                 self.notes.remove(note)
-                result = True
-                break
+                return True
+        return False
 
     def edit_note(self, title: str, content: str):
         """
-        Edits the record found by the title.
+        Edits the note found by title.
 
         Args:
-            title (str): The title of note
-            content (str): New content
+            title (str): The title of the note.
+            content (str): New content.
         """
 
         for note in self.notes:
             if note.title == title:
                 note.content = content
+                return True
+        return False
 
     @classmethod
     def load_notes_from_json(cls, filename: str):
@@ -90,7 +106,7 @@ class NoteManager:
             with open(filename, "r", encoding="utf-8") as file:
                 data = json.load(file)
                 for note_data in data:
-                    new_note_book.add_note(note_data["title"], note_data["content"])
+                    new_note_book.add_note(note_data["title"], note_data["content"], note_data["tags"])
         except FileNotFoundError:
             pass
 
@@ -105,7 +121,7 @@ class NoteManager:
         """
         data = []
         for note in self.notes:
-            data.append({"title": note.title, "content": note.content})
+            data.append({"title": note.title, "content": note.content, "tags": note.tags})
 
         with open(filename, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)

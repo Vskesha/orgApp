@@ -17,7 +17,7 @@ from classes_nb import Note
 from pathlib import Path
 
 
-FILE_PATH = (Path.home() / "orgApp" / "notes.json")  # for working on different filesystems
+FILE_PATH = Path.home() / "orgApp" / "notes.json"  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
 NOTE_MANAGER = NoteManager.load_notes_from_json(str(FILE_PATH))  # Create an object to manage notes from file
 
@@ -37,7 +37,7 @@ def command_parser(user_input: str) -> tuple[callable, str]:
     for command in COMMANDS:
         if lower_input_end_spaced.startswith(command + " "):
             func = COMMANDS[command]
-            data = user_input[len(command) + 1 :].strip()
+            data = user_input[len(command) + 1:].strip()
 
     if not func:
         raise ValueError(f"There is no such command {user_input.split()[0]}")
@@ -52,14 +52,27 @@ def handle_add_note(args: str):
     NOTE_MANAGER.add_note(title, content)
     return "Note added successfully."
 
+
+def handle_add_tag(agrs: str):
+    """add tag to note"""
+    title = input("Enter note title: ")
+    tag = input("Enter tag: ")
+    result = NOTE_MANAGER.add_tag_to_note(title, tag)
+    if result:
+        return "Tag added successfully."
+    else:
+        return "Note not found."
+
+
 def handle_delete_note(args: str):
-    """deletes note from your NoteBook"""
+    """deletes note from NoteBook"""
     title = input("Enter note title: ")
     result = NOTE_MANAGER.delete_note(title)
     if result:
         return "Note deleted successfully."
     else:
         return "Note not find."
+
 
 def handle_edit_note(args: str):
     """edit a note content in the NoteBook"""
@@ -176,6 +189,7 @@ COMMANDS = {
     "find": handle_search_notes,
     "edit": handle_edit_note,
     "delete": handle_delete_note,
+    "add_tag": handle_add_tag,
     "exit": handle_exit,
     "close": handle_exit,
     "bye": handle_exit,
