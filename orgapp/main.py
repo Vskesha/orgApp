@@ -41,7 +41,6 @@ def main():
     print_menu()
     subprogram = COMMANDS[get_command()]
     subprogram()
-    pass
 
 
 def print_menu():
