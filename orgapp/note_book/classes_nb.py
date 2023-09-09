@@ -20,8 +20,8 @@ class Note:
         """
         self.title = title
         self.content = content
-
-
+    
+     
 class NoteManager:
     """Manages a collection of notes."""
 
@@ -65,6 +65,10 @@ class NoteManager:
 
         return new_note_book
 
+    def get_all_notes(self):
+        """ Returns a list of all notes."""
+        return self.notes
+    
     def save_notes_to_json(self, filename: str):
         """
         Saves the notes to a JSON file.
