@@ -22,7 +22,6 @@ class Note:
         self.content = content
     
      
-
 class NoteManager:
     """Manages a collection of notes."""
 

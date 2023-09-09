@@ -95,7 +95,7 @@ def handle_view_all_notes(args: str):
             result_str += f"{idx}. Title: {note.title}\nContent: {note.content}\n"
         return result_str
     else:
-        return "Нотаток немає."
+        return " There are no notes."
 
 def input_error(func):
     """
