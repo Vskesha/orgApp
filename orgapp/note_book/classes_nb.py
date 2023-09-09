@@ -11,7 +11,7 @@ from functools import wraps
 class Note:
     """Represents a note with a title and content."""
 
-    def __init__(self, title: str, content: str, tags: list = None):
+    def __init__(self, title: str, content: str, tags: str = ""):
         """
         Initializes a new Note.
 
@@ -22,7 +22,7 @@ class Note:
         """
         self.title = title
         self.content = content
-        self.tags = tags if tags else []
+        self.tags = [tags] if tags else []
 
 
 class NoteManager:
@@ -48,6 +48,34 @@ class NoteManager:
         Extends self.notes with notes from other NoteManager object
         """
         self.notes.extend(other.notes)
+
+    def delete_note(self, title: str):
+        """
+        Delete the record found by the title.
+
+        Args:
+            title (str): The title of note
+        """
+
+        result = False
+        for note in self.notes:
+            if note.title == title:
+                self.notes.remove(note)
+                result = True
+                break
+
+    def edit_note(self, title: str, content: str):
+        """
+        Edits the record found by the title.
+
+        Args:
+            title (str): The title of note
+            content (str): New content
+        """
+
+        for note in self.notes:
+            if note.title == title:
+                note.content = content
 
     @classmethod
     def load_notes_from_json(cls, filename: str):
@@ -97,31 +125,3 @@ class NoteManager:
             if keyword in note.title or keyword in note.content:
                 results.append(note)
         return results
-
-    def edit_note(self, title: str, content: str):
-        """
-        Edits the record found by the title.
-
-        Args:
-            title (str): The title of note
-            content (str): New content
-        """
-
-        for note in self.notes:
-            if note.title == title:
-                note.content = content
-
-    def delete_note(self, title: str):
-        """
-        Delete the record found by the title.
-
-        Args:
-            title (str): The title of note
-        """
-
-        result = False
-        for note in self.notes:
-            if note.title == title:
-                self.notes.remove(note)
-                result = True
-                break
