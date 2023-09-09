@@ -17,7 +17,7 @@ from classes_nb import Note
 from pathlib import Path
 
 
-FILE_PATH = Path.home() / 'orgApp' / 'notes.json'  # for working on different filesystems
+FILE_PATH = (Path.home() / "orgApp" / "notes.json")  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
 NOTE_MANAGER = NoteManager.load_notes_from_json(str(FILE_PATH))  # Create an object to manage notes from file
 
@@ -33,11 +33,11 @@ def command_parser(user_input: str) -> tuple[callable, str]:
         raise IndexError("Nothing was entered ...")
 
     func, data = None, []
-    lower_input_end_spaced = user_input.lower() + ' '
+    lower_input_end_spaced = user_input.lower() + " "
     for command in COMMANDS:
-        if lower_input_end_spaced.startswith(command + ' '):
+        if lower_input_end_spaced.startswith(command + " "):
             func = COMMANDS[command]
-            data = user_input[len(command) + 1:].strip()
+            data = user_input[len(command) + 1 :].strip()
 
     if not func:
         raise ValueError(f"There is no such command {user_input.split()[0]}")
@@ -52,10 +52,26 @@ def handle_add_note(args: str):
     NOTE_MANAGER.add_note(title, content)
     return "Note added successfully."
 
+def handle_delete_note(args: str):
+    """deletes note from your NoteBook"""
+    title = input("Enter note title: ")
+    result = NOTE_MANAGER.delete_note(title)
+    if result:
+        return "Note deleted successfully."
+    else:
+        return "Note not find."
+
+def handle_edit_note(args: str):
+    """edit a note content in the NoteBook"""
+    title = input("Enter note title: ")
+    content = input("Enter new note text: ")
+    NOTE_MANAGER.edit_note(title, content)
+    return "Note edited successfully."
+
 
 def handle_exit(args: str):
     """exits the program"""
-    return handle_save_notes('') + '\nGoodbye!'
+    return handle_save_notes("") + "\nGoodbye!"
 
 
 def handle_load_notes(args: str):
@@ -96,21 +112,23 @@ def input_error(func):
     Returns:
         callable: The wrapped function with error handling.
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
             result = func(*args, **kwargs)
             return result
         except IndexError as e:
-            print('Not enough data.', str(e))
+            print("Not enough data.", str(e))
         except ValueError as e:
-            print('Wrong value.', str(e))
+            print("Wrong value.", str(e))
         except KeyError as e:
-            print('Wrong key.', str(e)[1:-1])
+            print("Wrong key.", str(e)[1:-1])
         except TypeError as e:
-            print('Wrong type of value.', str(e))
+            print("Wrong type of value.", str(e))
         except FileNotFoundError as e:
             print(e)
+
     return wrapper
 
 
@@ -119,11 +137,11 @@ def main_cycle() -> bool:
     """
     return True if it needs to stop program. False otherwise.
     """
-    user_input = input('>>> ')
+    user_input = input(">>> ")
     func, argument = command_parser(user_input)
     result = func(argument)
     print(result)
-    return result.endswith('Goodbye!')
+    return result.endswith("Goodbye!")
 
 
 def main():
@@ -150,18 +168,20 @@ def print_menu():
 
 # Map of commands and their corresponding handler functions
 COMMANDS = {
-    'add': handle_add_note,
-    'plus': handle_add_note,
-    'save': handle_save_notes,
-    'load': handle_load_notes,
-    'search': handle_search_notes,
-    'find': handle_search_notes,
-    'exit': handle_exit,
-    'close': handle_exit,
-    'bye': handle_exit,
-    'goodbye': handle_exit,
+    "add": handle_add_note,
+    "plus": handle_add_note,
+    "save": handle_save_notes,
+    "load": handle_load_notes,
+    "search": handle_search_notes,
+    "find": handle_search_notes,
+    "edit": handle_edit_note,
+    "delete": handle_delete_note,
+    "exit": handle_exit,
+    "close": handle_exit,
+    "bye": handle_exit,
+    "goodbye": handle_exit,
 }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
