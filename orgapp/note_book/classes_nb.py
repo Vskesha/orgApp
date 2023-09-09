@@ -1,11 +1,5 @@
-"""
-Оля сюди скопіюй свої методи класів
-Олег допишеш в ці класи свої методи
-По можливості додавайте typehints для методів класу і докстрінги (якщо не знаєте що це
-то скидайте як є і потім якось доробимо)
-"""
 import json
-from functools import wraps
+
 
 class Note:
     """Represents a note with a title and content."""
@@ -68,7 +62,7 @@ class NoteManager:
     def get_all_notes(self):
         """ Returns a list of all notes."""
         return self.notes
-    
+
     def save_notes_to_json(self, filename: str):
         """
         Saves the notes to a JSON file.
