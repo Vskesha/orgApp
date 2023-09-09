@@ -126,6 +126,22 @@ class NoteManager:
         with open(filename, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
 
+    def search_by_tag(self, tag:str):
+        """
+        Searches for notes by tag.
+
+        Args:
+            tag (str): The tag to search for.
+
+        Returns:
+            list: A list of notes having the tag.
+        """
+        results = []
+        for note in self.notes:
+            if tag in note.tags:
+                results.append(note)
+        return results    
+    
     def search_notes(self, keyword: str):
         """
         Searches for notes containing a specific keyword.

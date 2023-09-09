@@ -101,6 +101,20 @@ def handle_save_notes(args: str):
     return f"Notes saved to {str(FILE_PATH)}"
 
 
+def handle_find_by_tag(args:str):
+    """returns notes with given tags"""
+    tag = args[0] if args else input("Enter a tag to search: ")
+    search_results = NOTE_MANAGER.search_by_tag(tag)
+    if search_results:
+        result_str = "Search results:\n"
+        for idx, result in enumerate(search_results, 1):
+            result_str += f"{idx}. Title: {result.title}\n"
+            result_str += f"   Text: {result.content}\n"
+        return result_str
+    else:
+        return "No notes found for this tag." 
+    
+
 def handle_search_notes(args: str):
     """returns notes with given keyword"""
     keyword = args[0] if args else input("Enter a keyword to search: ")
@@ -190,6 +204,8 @@ COMMANDS = {
     "edit": handle_edit_note,
     "delete": handle_delete_note,
     "add_tag": handle_add_tag,
+    "search_by_tag": handle_find_by_tag,
+    "find_by_tag": handle_find_by_tag,
     "exit": handle_exit,
     "close": handle_exit,
     "bye": handle_exit,
