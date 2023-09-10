@@ -2,10 +2,7 @@ from classes_nb import NoteManager
 from colorama import init as init_colorama, Fore, Back, Style
 from functools import wraps
 from pathlib import Path
-from prompt_toolkit.lexers import Lexer
-from prompt_toolkit.styles.named_colors import NAMED_COLORS
-from prompt_toolkit.completion import NestedCompleter
-from prompt_toolkit import prompt 
+
 
 FILE_PATH = Path.home() / "orgApp" / "notes.json"  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -123,7 +120,10 @@ def handle_search_notes(args: str) -> str:
     keyword = args[0] if args else input("Enter a keyword to search: ")
     search_results = NOTE_MANAGER.search_notes(keyword)
     if search_results:
-        result_str = NOTE_MANAGER.string_from_list(search_results)
+        result_str = "Search results:\n"
+        for idx, result in enumerate(search_results, 1):
+            result_str += f"{idx}. Title: {result.title}\n"
+            result_str += f"   Text: {result.content}\n"
         return result_str
     else:
         return "No notes found for this keyword."
@@ -133,7 +133,9 @@ def handle_view_all_notes(args: str) -> str:
     """displays all notes."""
     all_notes = NOTE_MANAGER.get_all_notes()
     if all_notes:
-        result_str = NOTE_MANAGER.string_from_list(all_notes)
+        result_str = "All notes:\n"
+        for idx, note in enumerate(all_notes, 1):
+            result_str += f"{idx}. Title: {note.title}\n   Text: {note.content}\n"
         return result_str
     else:
         return " There are no notes."
