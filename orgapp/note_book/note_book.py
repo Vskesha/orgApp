@@ -206,10 +206,10 @@ def prepare() -> None:
 
 def print_menu():
     print(Fore.GREEN, "Available commands:")
-    separator = '--------------------------------|----------------------------------------'
-    print(separator, '\n           Commands             |     Action\n', separator, sep='')
+    separator = '|--------------------------------|-----------------------------------------|'
+    print(separator, f'\n|           Commands             |     Action{" ":30}|\n', separator, sep='')
     for func, commands in COMMANDS_LISTS.items():  # generic way when we add new action
-        print(f" {Fore.WHITE} {', '.join(commands):<30}{Fore.GREEN}| {func.__doc__:<20}")
+        print(f"| {Fore.WHITE} {', '.join(commands):<30}{Fore.GREEN}| {func.__doc__:<40}|")
     print(separator, '\n')
 
 
