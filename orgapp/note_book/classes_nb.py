@@ -200,7 +200,3 @@ class NoteManager:
                 result += f"     Tags: {', '.join(note.tags)}\n"
                 result += "\n"   
         return result
-    
-
-    
-
