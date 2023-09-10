@@ -101,31 +101,22 @@ def handle_load_notes(args: str) -> str:
     return f"Notes loaded from {filename}"
 
 
+def handle_find_by_tag(args: str) -> str:
+    """returns notes with given tags"""
+    tag = args.split()[0] if args else input("Enter a tag to search: ")
+    search_results = NOTE_MANAGER.search_by_tag(tag)
+    if search_results:
+        result_str = NoteManager.string_from_list(search_results)
+        return result_str
+    else:
+        return "No notes found for this tag."
+
+
 def handle_save_notes(args: str) -> str:
     """saves notes to file"""
     NOTE_MANAGER.save_notes_to_json(str(FILE_PATH))
     return f"Notes saved to {str(FILE_PATH)}"
 
-
-def handle_find_by_tag(args: str) -> str:
-    """returns notes with given tags"""
-    title = input("Enter note title: ")
-    tag = input("Enter tag: ")
-    result = NOTE_MANAGER.add_tag_to_note(title, tag)
-    if result:
-        note = NOTE_MANAGER.search_notes(title)
-        if note:
-            result_str = "Tag added successfully.\n"
-            result_str += f"Title: {note[0].title}\n"
-            result_str += f"Text: {note[0].content}\n"
-            if note[0].tags:
-                result_str += f"Tags: {', '.join(note[0].tags)}\n"
-            return result_str
-        else:
-            return "Note not found."
-    else:
-        return "Note not found."
-    
 
 def handle_search_notes(args: str) -> str:
     """returns notes with given keyword"""
