@@ -182,7 +182,8 @@ def main_cycle() -> bool:
     """
     return True if it needs to stop program. False otherwise.
     """
-    user_input = prompt('>>> ', completer=Completer, lexer=RainbowLexer())
+    completer = NestedCompleter.from_nested_dict({command: None for command in COMMANDS.keys()})
+    user_input = prompt('>>> ', completer=completer, lexer=RainbowLexer())
     func, argument = command_parser(user_input)
     result = func(argument)
     print(Fore.BLUE, result)
@@ -202,7 +203,7 @@ def prepare() -> None:
     :return: None
     """
     init_colorama()
-    print(Fore.BLUE + Back.BLACK + Style.BRIGHT + NOTEBOOK_LOGO)
+    print(Fore.BLUE + Style.BRIGHT + NOTEBOOK_LOGO)
     print("Welcome to your note-taking app!")
     print()
     print_menu()  # Display the menu with commands
@@ -232,6 +233,7 @@ COMMANDS_LISTS = {
 }
 COMMANDS = {command: func for func, commands in COMMANDS_LISTS.items() for command in commands}
 
+
 class RainbowLexer(Lexer):
     """
     Lexer for rainbow syntax highlighting.
@@ -249,14 +251,6 @@ class RainbowLexer(Lexer):
             ]
 
         return get_line
-
-
-
-Completer = NestedCompleter.from_nested_dict({'add': None,'exit': None,'find': None,'search': None, 'search_tag': None,
-                                              'close': None,'add_tag': None,'all_notes': None,'find_tag': None,
-                                              'plus': None, 'edit': None, 'bye': None,'load': None,'save': None,
-                                              ' view': None, 'all': None, 'goodbye': None,'delete': None })
-
 
 
 if __name__ == "__main__":
