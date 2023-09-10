@@ -224,7 +224,7 @@ COMMANDS_LISTS = {
     handle_load_notes: ["load"],
     handle_save_notes: ['save'],
     handle_search_notes: ['find', 'search'],
-    handle_find_by_tag: ["find_tag", 'search_tag'],
+    handle_find_by_tag: ['tag', "find_tag", 'search_tag'],
 }
 COMMANDS = {command: func for func, commands in COMMANDS_LISTS.items() for command in commands}
 

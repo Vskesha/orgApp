@@ -1,11 +1,10 @@
+import sys
+sys.path.extend(['sorter', 'note_book', 'address_book'])
 from colorama import init as init_colorama, Fore, Back, Style
-from note_book.note_book import main as note_book_main
+from sorter import clean_folder
+from note_book import main as note_main
 
 
-COMMANDS = {
-    'note': note_book_main,
-    'notebook': note_book_main,
-}
 COMMAND_COLOR = Fore.WHITE
 TEXT_COLOR = Fore.BLUE
 ERROR_COLOR = Fore.RED
@@ -22,10 +21,14 @@ d88' `88b `888""8P 888' `88b     .8' `888.     888' `88b  888' `88b
 """
 
 
+def close_program():
+    print(f'{Fore.GREEN}Goodbye!')
+
+
 def get_command() -> str:
     """Gets and returns str command from user"""
     while True:
-        command = input('>>>')
+        command = input('>>>').strip()
         if command in COMMANDS:
             return command
         else:
@@ -58,7 +61,17 @@ def print_menu():
     print(f'Also You are able to sort your files with {COMMAND_COLOR}sorter.')
     print(f'{TEXT_COLOR}And if you are tired you can play simple games:')
     print(f'{COMMAND_COLOR}tictactoe, bandergoose, hannoitower '
-          f'{TEXT_COLOR}or {COMMAND_COLOR}snake\n')
+          f'{TEXT_COLOR}or {COMMAND_COLOR}snake.')
+    print(f'exit, quit {TEXT_COLOR}to close the program')
+
+
+COMMANDS = {
+    'note': note_main,
+    'notebook': note_main,
+    'sorter': clean_folder,
+    'exit': close_program,
+    'quit': close_program,
+}
 
 
 if __name__ == '__main__':
