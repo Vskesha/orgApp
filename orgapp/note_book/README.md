@@ -38,5 +38,8 @@ Enter one of the listed commands followed by arguments
 
 `command` `args`. Values must be separated with space.
 
+This application may work as a discrete unit or can be 
+a part of a greater orgApp application.
+
 
 Simple example of using:
