@@ -44,3 +44,13 @@ d8(  888  888   888  888   888   888     888    .o o.  )88b o.  )88b
              888   888 888   888 888   888  888 `88b.  
              `Y8bod8P' `Y8bod8P' `Y8bod8P' o888o o888o 
 """
+
+SORTER_LOGO = """
+ .oooooo..o                        .                      
+d8P'    `Y8                      .o8                      
+Y88bo.       .ooooo.  oooo d8b .o888oo  .ooooo.  oooo d8b 
+ `"Y8888o.  d88' `88b `888""8P   888   d88' `88b `888""8P 
+     `"Y88b 888   888  888       888   888ooo888  888     
+oo     .d8P 888   888  888       888 . 888    .o  888     
+8""88888P'  `Y8bod8P' d888b      "888" `Y8bod8P' d888b    
+"""
