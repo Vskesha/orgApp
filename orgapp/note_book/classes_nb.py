@@ -16,36 +16,7 @@ class Note:
         self.title = title
         self.content = content
         self.tags = tags if tags else []
-    
-    @property
-    def title(self):
-        return self._title
 
-    @title.setter
-    def title(self, new_title):
-        if new_title.strip():   
-            self._title = new_title
-        else:
-            raise ValueError("Title cannot be empty.")
-
-    @property
-    def content(self):
-        return self._content
-
-    @content.setter
-    def content(self, new_content):
-        if new_content.strip():   
-            self._content = new_content
-        else:
-            raise ValueError("Content cannot be empty.")
-
-    @property
-    def tags(self):
-        return self._tags
-
-    @tags.setter
-    def tags(self, new_tags):
-        self._tags = new_tags if new_tags else []
 
 class NoteManager:
     """Manages a collection of notes."""
@@ -185,17 +156,6 @@ class NoteManager:
                 results.append(note)
         return results
 
-    def string_from_list(self, notes: list[Note]) -> str:
+    def string_from_list(self, nodes: list[Note]) -> str:
         """makes multiline string from given list of Notes"""
-        result = ""
-        for note in notes:
-            result += f"Title: {note.title}\n"
-            result += f"Content: {note.content}\n"
-            if note.tags:
-                result += f"Tags: {', '.join(note.tags)}\n"
-                result += "\n"   
-        return result
-    
-
-    
-
+        pass
