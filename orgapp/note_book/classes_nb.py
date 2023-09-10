@@ -101,7 +101,7 @@ class NoteManager:
                 data = json.load(file)
                 for note_data in data:
                     new_note_book.add_note(note_data["title"], note_data["content"], note_data["tags"])
-        except FileNotFoundError:
+        except (FileNotFoundError, KeyError):
             pass
 
         return new_note_book
@@ -155,3 +155,7 @@ class NoteManager:
             if keyword in note.title or keyword in note.content:
                 results.append(note)
         return results
+
+    def string_from_list(self, nodes: list[Note]) -> str:
+        """makes multiline string from given list of Notes"""
+        pass

@@ -1,4 +1,4 @@
-from .classes_nb import NoteManager
+from classes_nb import NoteManager
 from colorama import init as init_colorama, Fore, Back, Style
 from functools import wraps
 from pathlib import Path
@@ -206,29 +206,27 @@ def prepare() -> None:
 
 def print_menu():
     print(Fore.GREEN, "Available commands:")
-    for command, func in COMMANDS.items():
-        print(f"-{Fore.WHITE} {command: <8} {Fore.GREEN + func.__doc__}")
+    separator = '--------------------------------|----------------------------------------'
+    print(separator, '\n           Commands             |     Action\n', separator, sep='')
+    for func, commands in COMMANDS_LISTS.items():  # generic way when we add new action
+        print(f" {Fore.WHITE} {', '.join(commands):<30}{Fore.GREEN}| {func.__doc__:<20}")
+    print(separator, '\n')
 
 
 # Map of commands and their corresponding handler functions
-COMMANDS = {
-    "add": handle_add_note,
-    "add_tag": handle_add_tag,
-    'all': handle_view_all_notes,
-    "bye": handle_exit,
-    "close": handle_exit,
-    "delete": handle_delete_note,
-    "edit": handle_edit_note,
-    "exit": handle_exit,
-    "find": handle_search_notes,
-    "find_tag": handle_find_by_tag,
-    "goodbye": handle_exit,
-    "load": handle_load_notes,
-    "plus": handle_add_note,
-    "save": handle_save_notes,
-    "search": handle_search_notes,
-    "search_tag": handle_find_by_tag,
+COMMANDS_LISTS = {
+    handle_add_note: ["add", 'plus'],
+    handle_add_tag: ["add_tag"],
+    handle_view_all_notes: ['all', 'all_notes', 'view'],
+    handle_edit_note: ['edit'],
+    handle_exit: ["bye", 'close', 'exit', 'goodbye'],
+    handle_delete_note: ["delete"],
+    handle_load_notes: ["load"],
+    handle_save_notes: ['save'],
+    handle_search_notes: ['find', 'search'],
+    handle_find_by_tag: ["find_tag", 'search_tag'],
 }
+COMMANDS = {command: func for func, commands in COMMANDS_LISTS.items() for command in commands}
 
 
 if __name__ == "__main__":
