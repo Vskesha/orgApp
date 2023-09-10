@@ -13,9 +13,42 @@ class Note:
             content (str): The content of the note.
             tags (list):  The tags of the note.
         """
+        self.__title = None
+        self.__content = None
+        self.__tags = None
         self.title = title
         self.content = content
-        self.tags = tags if tags else []
+        self.tags = tags
+    
+    @property
+    def title(self):
+        return self.__title
+
+    @title.setter
+    def title(self, new_title):
+        if new_title.strip():   
+            self.__title = new_title
+        else:
+            raise ValueError("Title cannot be empty.")
+
+    @property
+    def content(self):
+        return self.__content
+
+    @content.setter
+    def content(self, new_content):
+        if new_content.strip():   
+            self.__content = new_content
+        else:
+            raise ValueError("Content cannot be empty.")
+
+    @property
+    def tags(self):
+        return self.__tags
+
+    @tags.setter
+    def tags(self, new_tags):
+        self.__tags = new_tags if new_tags else []
 
 
 class NoteManager:
@@ -156,6 +189,14 @@ class NoteManager:
                 results.append(note)
         return results
 
-    def string_from_list(self, nodes: list[Note]) -> str:
+    @classmethod
+    def string_from_list(cls, notes: list[Note]) -> str:
         """makes multiline string from given list of Notes"""
-        pass
+        result = ""
+        for i, note in enumerate(notes, 1):
+            result += f"{i:>3}. Title: {note.title}\n"
+            result += f"     Content: {note.content}\n"
+            if note.tags:
+                result += f"     Tags: {', '.join(note.tags)}\n"
+                result += "\n"   
+        return result

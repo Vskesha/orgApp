@@ -178,7 +178,8 @@ def main_cycle() -> bool:
     """
     return True if it needs to stop program. False otherwise.
     """
-    user_input = input(Fore.WHITE + '>>> ')
+    completer = NestedCompleter.from_nested_dict({command: None for command in COMMANDS.keys()})
+    user_input = prompt('>>> ', completer=completer, lexer=RainbowLexer())
     func, argument = command_parser(user_input)
     result = func(argument)
     print(Fore.BLUE, result)
@@ -198,7 +199,7 @@ def prepare() -> None:
     :return: None
     """
     init_colorama()
-    print(Fore.BLUE + Back.BLACK + Style.BRIGHT + NOTEBOOK_LOGO)
+    print(Fore.BLUE + Style.BRIGHT + NOTEBOOK_LOGO)
     print("Welcome to your note-taking app!")
     print()
     print_menu()  # Display the menu with commands
@@ -227,6 +228,25 @@ COMMANDS_LISTS = {
     handle_find_by_tag: ['tag', "find_tag", 'search_tag'],
 }
 COMMANDS = {command: func for func, commands in COMMANDS_LISTS.items() for command in commands}
+
+
+class RainbowLexer(Lexer):
+    """
+    Lexer for rainbow syntax highlighting.
+
+    This lexer assigns colors to characters based on the rainbow spectrum.
+    """
+
+    def lex_document(self, document):
+        colors = list(sorted({"Teal": "#028000"}, key=NAMED_COLORS.get))
+
+        def get_line(lineno):
+            return [
+                (colors[i % len(colors)], c)
+                for i, c in enumerate(document.lines[lineno])
+            ]
+
+        return get_line
 
 
 if __name__ == "__main__":
