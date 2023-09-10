@@ -2,10 +2,7 @@ from classes_nb import NoteManager
 from colorama import init as init_colorama, Fore, Back, Style
 from functools import wraps
 from pathlib import Path
-from prompt_toolkit.lexers import Lexer
-from prompt_toolkit.styles.named_colors import NAMED_COLORS
-from prompt_toolkit.completion import NestedCompleter
-from prompt_toolkit import prompt 
+
 
 FILE_PATH = Path.home() / "orgApp" / "notes.json"  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -109,22 +106,16 @@ def handle_save_notes(args: str) -> str:
 
 def handle_find_by_tag(args: str) -> str:
     """returns notes with given tags"""
-    title = input("Enter note title: ")
-    tag = input("Enter tag: ")
-    result = NOTE_MANAGER.add_tag_to_note(title, tag)
-    if result:
-        note = NOTE_MANAGER.search_notes(title)
-        if note:
-            result_str = "Tag added successfully.\n"
-            result_str += f"Title: {note[0].title}\n"
-            result_str += f"Text: {note[0].content}\n"
-            if note[0].tags:
-                result_str += f"Tags: {', '.join(note[0].tags)}\n"
-            return result_str
-        else:
-            return "Note not found."
+    tag = args.split()[0] if args else input("Enter a tag to search: ")
+    search_results = NOTE_MANAGER.search_by_tag(tag)
+    if search_results:
+        result_str = "Search results:\n"
+        for idx, result in enumerate(search_results, 1):
+            result_str += f"{idx}. Title: {result.title}\n"
+            result_str += f"   Text: {result.content}\n"
+        return result_str
     else:
-        return "Note not found."
+        return "No notes found for this tag." 
     
 
 def handle_search_notes(args: str) -> str:
@@ -132,7 +123,10 @@ def handle_search_notes(args: str) -> str:
     keyword = args[0] if args else input("Enter a keyword to search: ")
     search_results = NOTE_MANAGER.search_notes(keyword)
     if search_results:
-        result_str = NOTE_MANAGER.string_from_list(search_results)
+        result_str = "Search results:\n"
+        for idx, result in enumerate(search_results, 1):
+            result_str += f"{idx}. Title: {result.title}\n"
+            result_str += f"   Text: {result.content}\n"
         return result_str
     else:
         return "No notes found for this keyword."
@@ -142,7 +136,9 @@ def handle_view_all_notes(args: str) -> str:
     """displays all notes."""
     all_notes = NOTE_MANAGER.get_all_notes()
     if all_notes:
-        result_str = NOTE_MANAGER.string_from_list(all_notes)
+        result_str = "All notes:\n"
+        for idx, note in enumerate(all_notes, 1):
+            result_str += f"{idx}. Title: {note.title}\n   Text: {note.content}\n"
         return result_str
     else:
         return " There are no notes."
@@ -182,7 +178,7 @@ def main_cycle() -> bool:
     """
     return True if it needs to stop program. False otherwise.
     """
-    user_input = prompt('>>> ', completer=Completer, lexer=RainbowLexer())
+    user_input = input(Fore.WHITE + '>>> ')
     func, argument = command_parser(user_input)
     result = func(argument)
     print(Fore.BLUE, result)
@@ -231,32 +227,6 @@ COMMANDS_LISTS = {
     handle_find_by_tag: ['tag', "find_tag", 'search_tag'],
 }
 COMMANDS = {command: func for func, commands in COMMANDS_LISTS.items() for command in commands}
-
-class RainbowLexer(Lexer):
-    """
-    Lexer for rainbow syntax highlighting.
-
-    This lexer assigns colors to characters based on the rainbow spectrum.
-    """
-
-    def lex_document(self, document):
-        colors = list(sorted({"Teal": "#028000"}, key=NAMED_COLORS.get))
-
-        def get_line(lineno):
-            return [
-                (colors[i % len(colors)], c)
-                for i, c in enumerate(document.lines[lineno])
-            ]
-
-        return get_line
-
-
-
-Completer = NestedCompleter.from_nested_dict({'add': None,'exit': None,'find': None,'search': None, 'search_tag': None,
-                                              'close': None,'add_tag': None,'all_notes': None,'find_tag': None,
-                                              'plus': None, 'edit': None, 'bye': None,'load': None,'save': None,
-                                              ' view': None, 'all': None, 'goodbye': None,'delete': None })
-
 
 
 if __name__ == "__main__":
