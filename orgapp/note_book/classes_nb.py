@@ -1,11 +1,4 @@
-"""
-Оля сюди скопіюй свої методи класів
-Олег допишеш в ці класи свої методи
-По можливості додавайте typehints для методів класу і докстрінги (якщо не знаєте що це
-то скидайте як є і потім якось доробимо)
-"""
 import json
-from functools import wraps
 
 
 class Note:
@@ -32,24 +25,25 @@ class NoteManager:
         """Initializes a new NoteManager with an empty list of notes."""
         self.notes = []
 
-    def add_note(self, title: str, content: str, tags:list = None):
+    def add_note(self, title: str, content: str, tags: list = None) -> None:
         """
         Adds a new note to the collection.
 
         Args:
             title (str): The title of the note.
             content (str): The content of the note.
+            tags(list[str]): list with tag words
         """
         note = Note(title, content, tags)
         self.notes.append(note)
 
-    def add_notes(self, other):
+    def add_notes(self, other) -> None:
         """
         Extends self.notes with notes from other NoteManager object
         """
         self.notes.extend(other.notes)
 
-    def add_tag_to_note(self, title, tag):
+    def add_tag_to_note(self, title: str, tag: str) -> bool:
         """
         Adds the tag to the note found by title.
 
@@ -64,7 +58,7 @@ class NoteManager:
                 return True
         return False
 
-    def delete_note(self, title: str):
+    def delete_note(self, title: str) -> bool:
         """
         Deletes the note found by title.
 
@@ -78,7 +72,7 @@ class NoteManager:
                 return True
         return False
 
-    def edit_note(self, title: str, content: str):
+    def edit_note(self, title: str, content: str) -> bool:
         """
         Edits the note found by title.
 
@@ -112,7 +106,11 @@ class NoteManager:
 
         return new_note_book
 
-    def save_notes_to_json(self, filename: str):
+    def get_all_notes(self) -> list[Note]:
+        """ Returns a list of all notes."""
+        return self.notes
+
+    def save_notes_to_json(self, filename: str) -> None:
         """
         Saves the notes to a JSON file.
 
@@ -126,7 +124,7 @@ class NoteManager:
         with open(filename, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
 
-    def search_by_tag(self, tag:str):
+    def search_by_tag(self, tag: str) -> list[Note]:
         """
         Searches for notes by tag.
 
@@ -142,7 +140,7 @@ class NoteManager:
                 results.append(note)
         return results    
     
-    def search_notes(self, keyword: str):
+    def search_notes(self, keyword: str) -> list[Note]:
         """
         Searches for notes containing a specific keyword.
 

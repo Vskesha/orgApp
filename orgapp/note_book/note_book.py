@@ -1,25 +1,28 @@
-"""
-Також файл для Олі і Олега
-Оля перероби не через іфи а через виклик окремих функцій-хендлерів,
-які є ключами для команд (Приблизно кожен if є окремою функцією handle_XXX()
-додайте відповідні команди до COMMANDS і реалізуйте відповідні handler
-Хендлер приймає строку (все, що введено в консолі після назви команди) і повертає строку
-"""
-# зразок хендлера
-# def handle_add_number(user_input: str) -> str:
-#     """adds name and phone number"""
-
+from .classes_nb import NoteManager
+from colorama import init as init_colorama, Fore, Back, Style
 from functools import wraps
-
-from functools import wraps
-from classes_nb import NoteManager
-from classes_nb import Note
 from pathlib import Path
 
 
 FILE_PATH = Path.home() / "orgApp" / "notes.json"  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
 NOTE_MANAGER = NoteManager.load_notes_from_json(str(FILE_PATH))  # Create an object to manage notes from file
+NOTEBOOK_LOGO = """
+                          .                     
+                        .o8                     
+ooo. .oo.    .ooooo.  .o888oo  .ooooo.   
+`888P"Y88b  d88' `88b   888   d88' `88b   
+ 888   888  888   888   888   888ooo888    
+ 888   888  888   888   888 . 888    .o  
+o888o o888o `Y8bod8P'   "888" `Y8bod8P'  
+ .o8                           oooo
+"888                           `888
+ 888oooo.   .ooooo.   .ooooo.   888  oooo
+ d88' `88b d88' `88b d88' `88b  888 .8P'
+ 888   888 888   888 888   888  888888.
+ 888   888 888   888 888   888  888 `88b.
+ `Y8bod8P' `Y8bod8P' `Y8bod8P' o888o o888o
+"""
 
 
 def command_parser(user_input: str) -> tuple[callable, str]:
@@ -45,7 +48,7 @@ def command_parser(user_input: str) -> tuple[callable, str]:
     return func, data
 
 
-def handle_add_note(args: str):
+def handle_add_note(args: str) -> str:
     """adds note to your NoteBook"""
     title = input("Enter note title: ")
     content = input("Enter note text: ")
@@ -53,7 +56,7 @@ def handle_add_note(args: str):
     return "Note added successfully."
 
 
-def handle_add_tag(agrs: str):
+def handle_add_tag(agrs: str) -> str:
     """add tag to note"""
     title = input("Enter note title: ")
     tag = input("Enter tag: ")
@@ -64,7 +67,7 @@ def handle_add_tag(agrs: str):
         return "Note not found."
 
 
-def handle_delete_note(args: str):
+def handle_delete_note(args: str) -> str:
     """deletes note from NoteBook"""
     title = input("Enter note title: ")
     result = NOTE_MANAGER.delete_note(title)
@@ -74,7 +77,7 @@ def handle_delete_note(args: str):
         return "Note not find."
 
 
-def handle_edit_note(args: str):
+def handle_edit_note(args: str) -> str:
     """edit a note content in the NoteBook"""
     title = input("Enter note title: ")
     content = input("Enter new note text: ")
@@ -82,12 +85,12 @@ def handle_edit_note(args: str):
     return "Note edited successfully."
 
 
-def handle_exit(args: str):
+def handle_exit(args: str) -> str:
     """exits the program"""
     return handle_save_notes("") + "\nGoodbye!"
 
 
-def handle_load_notes(args: str):
+def handle_load_notes(args: str) -> str:
     """loads notes from the given file"""
     filename = args if args else input("Enter the filename to load: ")
     new_notes = NoteManager.load_notes_from_json(filename)
@@ -95,15 +98,15 @@ def handle_load_notes(args: str):
     return f"Notes loaded from {filename}"
 
 
-def handle_save_notes(args: str):
+def handle_save_notes(args: str) -> str:
     """saves notes to file"""
     NOTE_MANAGER.save_notes_to_json(str(FILE_PATH))
     return f"Notes saved to {str(FILE_PATH)}"
 
 
-def handle_find_by_tag(args:str):
+def handle_find_by_tag(args: str) -> str:
     """returns notes with given tags"""
-    tag = args[0] if args else input("Enter a tag to search: ")
+    tag = args.split()[0] if args else input("Enter a tag to search: ")
     search_results = NOTE_MANAGER.search_by_tag(tag)
     if search_results:
         result_str = "Search results:\n"
@@ -115,7 +118,7 @@ def handle_find_by_tag(args:str):
         return "No notes found for this tag." 
     
 
-def handle_search_notes(args: str):
+def handle_search_notes(args: str) -> str:
     """returns notes with given keyword"""
     keyword = args[0] if args else input("Enter a keyword to search: ")
     search_results = NOTE_MANAGER.search_notes(keyword)
@@ -127,6 +130,18 @@ def handle_search_notes(args: str):
         return result_str
     else:
         return "No notes found for this keyword."
+
+
+def handle_view_all_notes(args: str) -> str:
+    """displays all notes."""
+    all_notes = NOTE_MANAGER.get_all_notes()
+    if all_notes:
+        result_str = "All notes:\n"
+        for idx, note in enumerate(all_notes, 1):
+            result_str += f"{idx}. Title: {note.title}\n   Text: {note.content}\n"
+        return result_str
+    else:
+        return " There are no notes."
 
 
 def input_error(func):
@@ -146,16 +161,15 @@ def input_error(func):
             result = func(*args, **kwargs)
             return result
         except IndexError as e:
-            print("Not enough data.", str(e))
+            print(Fore.RED, 'Not enough data.', str(e))
         except ValueError as e:
-            print("Wrong value.", str(e))
+            print(Fore.RED, 'Wrong value.', str(e))
         except KeyError as e:
-            print("Wrong key.", str(e)[1:-1])
+            print(Fore.RED, 'Wrong key.', str(e)[1:-1])
         except TypeError as e:
-            print("Wrong type of value.", str(e))
+            print(Fore.RED, 'Wrong type of value.', str(e))
         except FileNotFoundError as e:
-            print(e)
-
+            print(Fore.RED, e)
     return wrapper
 
 
@@ -164,11 +178,11 @@ def main_cycle() -> bool:
     """
     return True if it needs to stop program. False otherwise.
     """
-    user_input = input(">>> ")
+    user_input = input(Fore.WHITE + '>>> ')
     func, argument = command_parser(user_input)
     result = func(argument)
-    print(result)
-    return result.endswith("Goodbye!")
+    print(Fore.BLUE, result)
+    return result.endswith('Goodbye!')
 
 
 def main():
@@ -183,33 +197,37 @@ def prepare() -> None:
     Displays initial information to the user
     :return: None
     """
+    init_colorama()
+    print(Fore.BLUE + Back.BLACK + Style.BRIGHT + NOTEBOOK_LOGO)
     print("Welcome to your note-taking app!")
+    print()
     print_menu()  # Display the menu with commands
 
 
 def print_menu():
-    print("Available commands:")
+    print(Fore.GREEN, "Available commands:")
     for command, func in COMMANDS.items():
-        print(f"- {command: <10} {func.__doc__}")
+        print(f"-{Fore.WHITE} {command: <8} {Fore.GREEN + func.__doc__}")
 
 
 # Map of commands and their corresponding handler functions
 COMMANDS = {
     "add": handle_add_note,
+    "add_tag": handle_add_tag,
+    'all': handle_view_all_notes,
+    "bye": handle_exit,
+    "close": handle_exit,
+    "delete": handle_delete_note,
+    "edit": handle_edit_note,
+    "exit": handle_exit,
+    "find": handle_search_notes,
+    "find_tag": handle_find_by_tag,
+    "goodbye": handle_exit,
+    "load": handle_load_notes,
     "plus": handle_add_note,
     "save": handle_save_notes,
-    "load": handle_load_notes,
     "search": handle_search_notes,
-    "find": handle_search_notes,
-    "edit": handle_edit_note,
-    "delete": handle_delete_note,
-    "add_tag": handle_add_tag,
-    "search_by_tag": handle_find_by_tag,
-    "find_by_tag": handle_find_by_tag,
-    "exit": handle_exit,
-    "close": handle_exit,
-    "bye": handle_exit,
-    "goodbye": handle_exit,
+    "search_tag": handle_find_by_tag,
 }
 
 
