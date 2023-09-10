@@ -4,7 +4,7 @@ from functools import wraps
 from pathlib import Path
 
 
-FILE_PATH = Path.home() / 'orgApp' / 'notes.json'  # for working on different filesystems
+FILE_PATH = Path.home() / "orgApp" / "notes.json"  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
 NOTE_MANAGER = NoteManager.load_notes_from_json(str(FILE_PATH))  # Create an object to manage notes from file
 NOTEBOOK_LOGO = """
@@ -36,9 +36,9 @@ def command_parser(user_input: str) -> tuple[callable, str]:
         raise IndexError("Nothing was entered ...")
 
     func, data = None, []
-    lower_input_end_spaced = user_input.lower() + ' '
+    lower_input_end_spaced = user_input.lower() + " "
     for command in COMMANDS:
-        if lower_input_end_spaced.startswith(command + ' '):
+        if lower_input_end_spaced.startswith(command + " "):
             func = COMMANDS[command]
             data = user_input[len(command) + 1:].strip()
 
@@ -48,7 +48,7 @@ def command_parser(user_input: str) -> tuple[callable, str]:
     return func, data
 
 
-def handle_add_note(args: str):
+def handle_add_note(args: str) -> str:
     """adds note to your NoteBook"""
     title = input("Enter note title: ")
     content = input("Enter note text: ")
@@ -56,12 +56,41 @@ def handle_add_note(args: str):
     return "Note added successfully."
 
 
-def handle_exit(args: str):
+def handle_add_tag(agrs: str) -> str:
+    """add tag to note"""
+    title = input("Enter note title: ")
+    tag = input("Enter tag: ")
+    result = NOTE_MANAGER.add_tag_to_note(title, tag)
+    if result:
+        return "Tag added successfully."
+    else:
+        return "Note not found."
+
+
+def handle_delete_note(args: str) -> str:
+    """deletes note from NoteBook"""
+    title = input("Enter note title: ")
+    result = NOTE_MANAGER.delete_note(title)
+    if result:
+        return "Note deleted successfully."
+    else:
+        return "Note not find."
+
+
+def handle_edit_note(args: str) -> str:
+    """edit a note content in the NoteBook"""
+    title = input("Enter note title: ")
+    content = input("Enter new note text: ")
+    NOTE_MANAGER.edit_note(title, content)
+    return "Note edited successfully."
+
+
+def handle_exit(args: str) -> str:
     """exits the program"""
-    return handle_save_notes('') + '\nGoodbye!'
+    return handle_save_notes("") + "\nGoodbye!"
 
 
-def handle_load_notes(args: str):
+def handle_load_notes(args: str) -> str:
     """loads notes from the given file"""
     filename = args if args else input("Enter the filename to load: ")
     new_notes = NoteManager.load_notes_from_json(filename)
@@ -69,13 +98,27 @@ def handle_load_notes(args: str):
     return f"Notes loaded from {filename}"
 
 
-def handle_save_notes(args: str):
+def handle_save_notes(args: str) -> str:
     """saves notes to file"""
     NOTE_MANAGER.save_notes_to_json(str(FILE_PATH))
     return f"Notes saved to {str(FILE_PATH)}"
 
 
-def handle_search_notes(args: str):
+def handle_find_by_tag(args: str) -> str:
+    """returns notes with given tags"""
+    tag = args.split()[0] if args else input("Enter a tag to search: ")
+    search_results = NOTE_MANAGER.search_by_tag(tag)
+    if search_results:
+        result_str = "Search results:\n"
+        for idx, result in enumerate(search_results, 1):
+            result_str += f"{idx}. Title: {result.title}\n"
+            result_str += f"   Text: {result.content}\n"
+        return result_str
+    else:
+        return "No notes found for this tag." 
+    
+
+def handle_search_notes(args: str) -> str:
     """returns notes with given keyword"""
     keyword = args[0] if args else input("Enter a keyword to search: ")
     search_results = NOTE_MANAGER.search_notes(keyword)
@@ -89,7 +132,7 @@ def handle_search_notes(args: str):
         return "No notes found for this keyword."
 
 
-def handle_view_all_notes(args: str):
+def handle_view_all_notes(args: str) -> str:
     """displays all notes."""
     all_notes = NOTE_MANAGER.get_all_notes()
     if all_notes:
@@ -111,6 +154,7 @@ def input_error(func):
     Returns:
         callable: The wrapped function with error handling.
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -168,19 +212,24 @@ def print_menu():
 
 # Map of commands and their corresponding handler functions
 COMMANDS = {
-    'add': handle_add_note,
-    'plus': handle_add_note,
-    'save': handle_save_notes,
-    'load': handle_load_notes,
+    "add": handle_add_note,
+    "add_tag": handle_add_tag,
     'all': handle_view_all_notes,
-    'search': handle_search_notes,
-    'find': handle_search_notes,
-    'exit': handle_exit,
-    'close': handle_exit,
-    'bye': handle_exit,
-    'goodbye': handle_exit,
+    "bye": handle_exit,
+    "close": handle_exit,
+    "delete": handle_delete_note,
+    "edit": handle_edit_note,
+    "exit": handle_exit,
+    "find": handle_search_notes,
+    "find_tag": handle_find_by_tag,
+    "goodbye": handle_exit,
+    "load": handle_load_notes,
+    "plus": handle_add_note,
+    "save": handle_save_notes,
+    "search": handle_search_notes,
+    "search_tag": handle_find_by_tag,
 }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
