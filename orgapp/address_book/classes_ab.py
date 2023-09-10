@@ -11,6 +11,7 @@ import calendar
 import re
 import json
 
+
 class AddressBook(UserDict):
     """
     A class representing an address book that stores and
@@ -50,24 +51,27 @@ class AddressBook(UserDict):
             print("Немає контакту, що відповідає заданим критеріям пошуку")
         return result
 
-    def get_all_records(self)-> str:
+    def get_all_records(self) -> str:
         """
         Retrieves all contact records in the address
         book and returns them.
         """
         all_contacts = []
-        header = '{:<20} {:<20} {:<20} {:<15}'.format('Ім\'я', 'Телефон', 'День народження', 'Ел. пошта')
+        header = '{:<20} {:<30} {:<20} {:<20}'.format('Ім\'я', 'Телефон', 'День народження', 'Ел. пошта')
         separator = '-' * len(header)
         all_contacts.append(header)
         all_contacts.append(separator)
 
         if self.data:
             for record in self.data.values():
-                record_str = '{:<20} {:<20} {:<20} {:<15}'.format(
+                phones = ', '.join([f'{phone.value}' for phone in record.phones])
+                birthday_str = record.birthday.value if record.birthday else '-'
+                email_str = record.email.value if record.email else '-'
+                record_str = '{:<20} {:<30} {:<20} {:<20}'.format(
                     record.name.value,
-                    ', '.join(phone.value for phone in record.phones),
-                    record.birthday.value if record.birthday else '-',
-                    record.email.value if record.email else '-'
+                    phones,
+                    birthday_str,
+                    email_str
                 )
                 all_contacts.append(record_str)
         else:
@@ -177,7 +181,7 @@ class Record:
 
     Args:
         name (str): The name of the contact.
-        phone (list): The phone number of the contact. Default is None.
+        phone (str): The phone number of the contact. Default is None.
         birthday (str, optional): The birthday of the contact in 'dd.mm.yyyy' format. Default is None.
         email (str, optional): The email address of the contact. Default is None.
     """
@@ -338,7 +342,7 @@ class Phone(Field):
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            print(f'Номер телефону {new_value} не можна призначити, оскільки він не валідний')
+            return f'Номер телефону {new_value} не можна призначити, оскільки він не валідний'
 
     def validate(self, number: str) -> bool:
         """
@@ -371,7 +375,7 @@ class Email(Field):
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            print(f'Пошту {new_value} не можна призначити, вона не валідна')
+            return f'Пошту {new_value} не можна призначити, вона не валідна'
 
     def validate(self, email: str) -> bool:
         """
@@ -435,7 +439,7 @@ class Birthday(Field):
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            print(f'Дату дня народження {new_value} не можна призначити, оскільки вона не валідна')
+            return f'Дату дня народження {new_value} не можна призначити, оскільки вона не валідна'
 
     def validate(self, new_value: str) -> bool:
         """
@@ -520,5 +524,7 @@ class AddressBookFileHandler:
             'birthday': record.birthday.value if record.birthday else None,
             'email': record.email.value if record.email else None
         }
+
+
 
 
