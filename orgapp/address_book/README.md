@@ -1,5 +1,42 @@
 # AddressBook Application
+<pre>
+                .o8        .o8                                       
+               "888       "888                                       
+ .oooo.    .oooo888   .oooo888  oooo d8b  .ooooo.   .oooo.o  .oooo.o 
+`P  )88b  d88' `888  d88' `888  `888""8P d88' `88b d88(  "8 d88(  "8 
+ .oP"888  888   888  888   888   888     888ooo888 `"Y88b.  `"Y88b.  
+d8(  888  888   888  888   888   888     888    .o o.  )88b o.  )88b 
+`Y888""8o `Y8bod88P" `Y8bod88P" d888b    `Y8bod8P' 8""888P' 8""888P' 
 
-In this folder there are files of AddressBook application. 
-This application may work as a discrete unit or can be a 
-part of a greater orgApp application.
+             .o8                           oooo        
+            "888                           `888        
+             888oooo.   .ooooo.   .ooooo.   888  oooo  
+             d88' `88b d88' `88b d88' `88b  888 .8P'   
+             888   888 888   888 888   888  888888.    
+             888   888 888   888 888   888  888 `88b.  
+             `Y8bod8P' `Y8bod8P' `Y8bod8P' o888o o888o 
+</pre>
+
+Welcome to your ADDRESS BOOK!
+
+ Доступні команди:
+
+|       Команди        |      Опис                               |
+|:---------------------|:----------------------------------------|
+|  add_email           | Додати адресу електронної пошти         |
+|  add_phone           | Додати номер телефону                   |
+|  add                 | Додати контакт                          |
+|  change_email        | Змінити адресу електронної пошти        |
+|  change_phone        | Змінити номер телефону                  |
+|  when_birthday       | Дні до дня народження                   |
+|  exit                | Вийти                                   |
+|  find                | Знайти контакт                          |
+|  all                 | Вивести всі контакти                    |
+|  get_list            | Список іменнинників за N днів           |
+|  load                | Завантажити з файлу                     |
+|  remove_email        | Видалити адресу електронної пошти       |
+|  remove_phone        | Видалити номер телефону                 |
+|  remove              | Видалити контакт                        |
+|  save                | Зберегти до файлу                       |
+|  help                | Вивести цю довідку                      |
+
