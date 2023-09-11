@@ -3,6 +3,10 @@ sys.path.extend(['sorter', 'note_book', 'address_book'])
 from colorama import init as init_colorama, Fore, Back, Style
 from sorter import clean_folder
 from note_book import main as note_main
+from prompt_toolkit.lexers import Lexer
+from prompt_toolkit.styles.named_colors import NAMED_COLORS
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import NestedCompleter
 
 
 COMMAND_COLOR = Fore.WHITE
@@ -25,10 +29,20 @@ def close_program():
     print(f'{Fore.GREEN}Goodbye!')
 
 
+COMMANDS = {
+    'note': note_main,
+    'notebook': note_main,
+    'sorter': clean_folder,
+    'exit': close_program,
+    'quit': close_program,
+}
+
+completer = NestedCompleter.from_nested_dict({command: None for command in COMMANDS.keys()})
+
 def get_command() -> str:
     """Gets and returns str command from user"""
     while True:
-        command = input('>>>').strip()
+        command = prompt('>>>', completer=completer, lexer=RainbowLexer()).strip()
         if command in COMMANDS:
             return command
         else:
@@ -65,13 +79,24 @@ def print_menu():
     print(f'exit, quit {TEXT_COLOR}to close the program')
 
 
-COMMANDS = {
-    'note': note_main,
-    'notebook': note_main,
-    'sorter': clean_folder,
-    'exit': close_program,
-    'quit': close_program,
-}
+
+class RainbowLexer(Lexer):
+    """
+    Lexer for rainbow syntax highlighting.
+
+    This lexer assigns colors to characters based on the rainbow spectrum.
+    """
+
+    def lex_document(self, document):
+        colors = list(sorted({"Teal": "#028000"}, key=NAMED_COLORS.get))
+
+        def get_line(lineno):
+            return [
+                (colors[i % len(colors)], c)
+                for i, c in enumerate(document.lines[lineno])
+            ]
+
+        return get_line
 
 
 if __name__ == '__main__':
