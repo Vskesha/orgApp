@@ -1,13 +1,14 @@
 import sys
-sys.path.extend(['sorter', 'note_book', 'address_book'])
+sys.path.extend(['sorter', 'note_book', 'address_book', 'tictactoe'])
 from address_book import main as address_main
 from colorama import init as init_colorama, Fore, Back, Style
-from sorter import clean_folder
 from note_book import main as note_main
 from prompt_toolkit.lexers import Lexer
 from prompt_toolkit.styles.named_colors import NAMED_COLORS
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
+from sorter import clean_folder
+from tictactoe import main as tictactoe_main
 
 
 COMMAND_COLOR = Fore.WHITE
@@ -38,6 +39,7 @@ COMMANDS = {
     'notebook': note_main,
     'quit': close_program,
     'sorter': clean_folder,
+    'tictactoe': tictactoe_main,
 }
 
 
