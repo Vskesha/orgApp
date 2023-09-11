@@ -1,5 +1,6 @@
 import sys
 sys.path.extend(['sorter', 'note_book', 'address_book'])
+from address_book import main as address_main
 from colorama import init as init_colorama, Fore, Back, Style
 from sorter import clean_folder
 from note_book import main as note_main
@@ -30,11 +31,13 @@ def close_program():
 
 
 COMMANDS = {
+    'ab': address_main,
+    'addressbook': address_main,
+    'exit': close_program,
     'note': note_main,
     'notebook': note_main,
-    'sorter': clean_folder,
-    'exit': close_program,
     'quit': close_program,
+    'sorter': clean_folder,
 }
 
 
@@ -42,7 +45,7 @@ def get_command() -> str:
     """Gets and returns str command from user"""
     completer = NestedCompleter.from_nested_dict({command: None for command in COMMANDS.keys()}) 
     while True:
-        command = prompt('>>>', completer=completer, lexer=RainbowLexer()).strip()
+        command = prompt('>>>', completer=completer, lexer=RainbowLexer()).strip().lower()
         if command in COMMANDS:
             return command
         else:
@@ -64,7 +67,7 @@ def print_menu():
     """
     Prints initial menu of the program
     """
-    print(Fore.GREEN + Back.BLACK + Style.BRIGHT + ORGAPP_LOGO)
+    print(Fore.GREEN+ Style.BRIGHT + ORGAPP_LOGO)
     print(f'{Fore.CYAN}{"":>35}YOUR FAVORITE ORGANIZER PROGRAM\n')
     print(Style.BRIGHT)
     print(TEXT_COLOR + 'With this app You can deal with your notes and contacts')
@@ -77,7 +80,6 @@ def print_menu():
     print(f'{COMMAND_COLOR}tictactoe, bandergoose, hannoitower '
           f'{TEXT_COLOR}or {COMMAND_COLOR}snake.')
     print(f'exit, quit {TEXT_COLOR}to close the program')
-
 
 
 class RainbowLexer(Lexer):

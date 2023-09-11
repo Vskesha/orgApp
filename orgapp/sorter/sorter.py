@@ -36,13 +36,13 @@ FOLDERS = []
 KNOWN_EXTENSIONS = set()
 UNKNOWN_EXTENSIONS = set()
 SORTER_LOGO = """
- .oooooo..o                        .                      
-d8P'    `Y8                      .o8                      
-Y88bo.       .ooooo.  oooo d8b .o888oo  .ooooo.  oooo d8b 
- `"Y8888o.  d88' `88b `888""8P   888   d88' `88b `888""8P 
-     `"Y88b 888   888  888       888   888ooo888  888     
-oo     .d8P 888   888  888       888 . 888    .o  888     
-8""88888P'  `Y8bod8P' d888b      "888" `Y8bod8P' d888b    
+ .oooooo..o                        .                     
+d8P'    `Y8                      .o8                     
+Y88bo.       .ooooo.  oooo d8b .o888oo  .ooooo.  oooo d8b
+ `"Y8888o.  d88' `88b `888""8P   888   d88' `88b `888""8P
+     `"Y88b 888   888  888       888   888ooo888  888    
+oo     .d8P 888   888  888       888 . 888    .o  888    
+8""88888P'  `Y8bod8P' d888b      "888" `Y8bod8P' d888b   
 """
 
 
@@ -170,28 +170,28 @@ def clean_folder():
     while True:
         path = Path(folder_to_sort).resolve()
         if not path.exists() or not path.is_dir():
-            folder_to_sort = input(f'There is no such folder "{folder_to_sort}"\n'
+            folder_to_sort = input(f'\nThere is no such folder "{folder_to_sort}"\n'
                                    f'Please enter the path to the existing folder\n'
-                                   f'(enter nothing to sort current folder): ')
+                                   f'(enter nothing to sort current folder): {Fore.WHITE}')
         else:
             confirmation = input(
-                f'{Fore.GREEN}Do You really want to sort {"this" if folder_to_sort else "current"} folder:\n"{path}"?\n'
+                f'\n{Fore.GREEN}Do You really want to sort {"this" if folder_to_sort else "current"} folder:\n"{path}"?\n'
                 f'{Fore.RED}!!! CHANGES ARE IRREVERSIBLE !!! \n'
-                f'{Fore.GREEN}type {Fore.WHITE}y / n {Fore.GREEN} or enter another path: ')
+                f'{Fore.GREEN}type {Fore.WHITE}y / n {Fore.GREEN} or enter another path: {Fore.WHITE}')
             if confirmation.lower() == 'n':
                 return
             if confirmation.lower() == 'y':
                 break
             folder_to_sort = confirmation
 
-    print(f'Start in folder "{path}"')
+    print(f'\nStart in folder "{path}"')
     sort_folder(path)
     print('Done')
 
 
 def prepare():
     init_colorama()
-    print(Fore.BLUE + Back.BLACK + Style.BRIGHT + SORTER_LOGO)
+    print(Fore.BLUE + Fore.BLACK + Style.BRIGHT + SORTER_LOGO)
     print("                     Welcome to your sorting app!")
 
 

@@ -143,6 +143,12 @@ class NoteManager:
         """ Returns a list of all notes."""
         return self.notes
 
+
+    def get_titles(self) -> list[str]:
+        """Returns a list of all titles"""
+        return [note.title for note in self.notes]
+
+
     def save_notes_to_json(self, filename: str) -> None:
         """
         Saves the notes to a JSON file.
@@ -198,5 +204,5 @@ class NoteManager:
             result += f"     Content: {note.content}\n"
             if note.tags:
                 result += f"     Tags: {', '.join(note.tags)}\n"
-                result += "\n"   
+            result += "\n"
         return result
