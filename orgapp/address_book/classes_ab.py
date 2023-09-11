@@ -1,8 +1,3 @@
-"""
-Андрій сюди скопіюй класи для адресної книги
-По можливості додай typehints для методів класу і докстрінги (якщо не знаєш що це
-то скидай як є і потім якось доробимо)
-"""
 # #АДРЕСНА КНИГА
 
 from collections import UserDict
@@ -10,6 +5,7 @@ from datetime import datetime, timedelta
 import calendar
 import re
 import json
+import textwrap
 
 
 class AddressBook(UserDict):
@@ -17,7 +13,7 @@ class AddressBook(UserDict):
     A class representing an address book that stores and
     manages contact records.
     """
-    def add_record(self, record) -> bool:
+    def add_record(self, record: 'Record') -> bool:
         """
         Adds a contact record to the address book
         if it passes validation.
@@ -96,7 +92,7 @@ class AddressBook(UserDict):
         print(f'Cписок іменнинників, яких треба вітати через {num} дні(ів): {happy_birthday}')
         return happy_birthday
 
-    def get_record_by_name(self, name: str):
+    def get_record_by_name(self, name: str) -> 'Record':
         """
         Retrieves a contact record by searching for a name.
         """
@@ -115,7 +111,7 @@ class AddressBook(UserDict):
         else:
             return False
 
-    def validate_record(self, record) -> bool:
+    def validate_record(self, record: 'Record') -> bool:
         """
         Validates a contact record, including name,
         phone numbers, birthday, and email.
@@ -143,21 +139,21 @@ class AddressBook(UserDict):
             print("Пошта не валідна.")
         return valid_phones and valid_name and valid_birthday and valid_email
 
-    def iterator(self, n: int):
+    def iterator(self, n: int) -> 'Record':
         """
         Splits the address book into iterators with 'n'
         records per iteration.
         """
         return (list(self.data.values())[i:i + n] for i in range(0, len(self.data), n))
 
-    def __iter__(self):
+    def __iter__(self) -> 'AddressBook':
         """
         Initializes the iterator for the address book.
         """
         self.index = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> 'Record':
         """
         Iterates through the address book, returning one record at a time.
         """
@@ -224,7 +220,7 @@ class Record:
         Adds a phone number to the contact's record.
         """
         phone = Phone(number)
-        if phone.validate(number):
+        if phone.validate(number) and number not in self.phones:
             self.phones.append(phone)
             return True
         else:
@@ -250,7 +246,7 @@ class Record:
             return True
         return False
 
-    def days_to_birthday(self)-> int:
+    def days_to_birthday(self) -> int:
         """
          Calculates the number of days remaining until the contact's next birthday.
         """
@@ -272,7 +268,7 @@ class Record:
         else:
             return None
 
-    def __str__(self)-> str:
+    def __str__(self) -> str:
         """
         Returns a string representation of the contact record.
         """
@@ -306,7 +302,7 @@ class Field:
         return True
 
     @property
-    def value(self)-> str:
+    def value(self) -> str:
         """
         Property representing the field's value.
         """
@@ -335,7 +331,7 @@ class Phone(Field):
         super().__init__(value)
 
     @Field.value.setter
-    def value(self, new_value: str) -> None:
+    def value(self, new_value: str) -> str:
         """
         Setter method for the phone number field.
          """
@@ -368,7 +364,7 @@ class Email(Field):
         super().__init__(value)
 
     @Field.value.setter
-    def value(self, new_value: str) -> None:
+    def value(self, new_value: str) -> str:
         """
         Setter method for the email field.
         """
@@ -401,14 +397,14 @@ class Name(Field):
         super().__init__(value)
 
     @Field.value.setter
-    def value(self, new_value: str) -> None:
+    def value(self, new_value: str) -> str:
         """
         Setter method for the new name value.
         """
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            print(f'Iм\'я {new_value} не можна призначити, воно не валідне')
+            return f'Iм\'я {new_value} не можна призначити, воно не валідне'
 
     def validate(self, name: str) -> bool:
         """
@@ -432,7 +428,7 @@ class Birthday(Field):
         super().__init__(value)
 
     @Field.value.setter
-    def value(self, new_value: str) -> None:
+    def value(self, new_value: str) -> str:
         """
         Setter method for the new birthday value.
         """
@@ -465,14 +461,14 @@ class AddressBookFileHandler:
     def __init__(self, file_name: str):
         self.file_name = file_name
 
-    def save_to_file(self, address_book: AddressBook) -> None:
+    def save_to_file(self, address_book: 'AddressBook') -> None:
         """
         Serializes and saves an AddressBook to a file.
         """
         with open(self.file_name, 'w') as file:
             json.dump(address_book.data, file, default=self._serialize_record, indent=4)
 
-    def _deserialize_record(self, contact_data: dict) -> Record:
+    def _deserialize_record(self, contact_data: dict) -> 'Record':
         """
         Deserializes a contact record from a dictionary.
         """
@@ -485,7 +481,7 @@ class AddressBookFileHandler:
         email = contact_data.get('email')
         return Record(name, phones[0] if phones else None, birthday, email)
 
-    def load_from_file(self)-> AddressBook:
+    def load_from_file(self) -> 'AddressBook':
         """
         Loads and deserializes an AddressBook from a file.
         """
@@ -514,7 +510,7 @@ class AddressBookFileHandler:
                 file.write("{}")
             return AddressBook()
 
-    def _serialize_record(self, record: Record) -> dict:
+    def _serialize_record(self, record: 'Record') -> dict:
         """
        Serializes a contact record to a dictionary.
         """
