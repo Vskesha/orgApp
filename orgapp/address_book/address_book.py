@@ -1,5 +1,30 @@
 from classes_ab import AddressBook, Record, AddressBookFileHandler, Phone, Email, Birthday, Name
 from functools import wraps
+from colorama import init as init_colorama, Fore, Style
+from prompt_toolkit.lexers import Lexer
+from prompt_toolkit.styles.named_colors import NAMED_COLORS
+from prompt_toolkit.completion import NestedCompleter
+from prompt_toolkit import prompt
+from pathlib import Path
+
+
+ADDRESSBOOK_LOGO = """
+                .o8        .o8                                       
+               "888       "888                                       
+ .oooo.    .oooo888   .oooo888  oooo d8b  .ooooo.   .oooo.o  .oooo.o 
+`P  )88b  d88' `888  d88' `888  `888""8P d88' `88b d88(  "8 d88(  "8 
+ .oP"888  888   888  888   888   888     888ooo888 `"Y88b.  `"Y88b.  
+d8(  888  888   888  888   888   888     888    .o o.  )88b o.  )88b 
+`Y888""8o `Y8bod88P" `Y8bod88P" d888b    `Y8bod8P' 8""888P' 8""888P' 
+
+             .o8                           oooo        
+            "888                           `888        
+             888oooo.   .ooooo.   .ooooo.   888  oooo  
+             d88' `88b d88' `88b d88' `88b  888 .8P'   
+             888   888 888   888 888   888  888888.    
+             888   888 888   888 888   888  888 `88b.  
+             `Y8bod8P' `Y8bod8P' `Y8bod8P' o888o o888o 
+"""
 
 # Команди та описи для користувача
 COMMANDS = {
@@ -18,6 +43,7 @@ COMMANDS = {
     'remove_phone_number': ['remove_phone'],
     'remove_record': ['remove'],
     'save_to_file': ['save'],
+    'help': ['help']
 }
 
 COMMAND_DESCRIPTIONS = {
@@ -30,13 +56,36 @@ COMMAND_DESCRIPTIONS = {
     'Вийти': ['exit'],
     'Знайти контакт': ['find'],
     'Вивести всі контакти': ['all'],
-    'Список іменнинників': ['get_list'],
+    'Список іменнинників за N днів': ['get_list'],
     'Завантажити з файлу': ['load'],
     'Видалити адресу електронної пошти': ['remove_email'],
     'Видалити номер телефону': ['remove_phone'],
     'Видалити контакт': ['remove'],
     'Зберегти до файлу': ['save'],
+    'Вивести цю довідку': ['help']
 }
+FILE_PATH = Path.home() / "orgApp" / "address_book.json"  # for working on different filesystems
+FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+
+class RainbowLexer(Lexer):
+    """
+    Lexer for rainbow syntax highlighting.
+
+    This lexer assigns colors to characters based on the rainbow spectrum.
+    """
+
+    def lex_document(self, document):
+        colors = list(sorted({"Teal": "#028000"}, key=NAMED_COLORS.get))
+
+        def get_line(lineno):
+            return [
+                (colors[i % len(colors)], c)
+                for i, c in enumerate(document.lines[lineno])
+            ]
+
+        return get_line
+
 
 def print_command_list():
     """
@@ -44,15 +93,22 @@ def print_command_list():
     This function formats the list of available commands and their descriptions
     in a user-friendly way for display.
     """
-    num_columns = 2
-    column_width = 50
-    commands_list = list(COMMAND_DESCRIPTIONS.keys())
-    formatted_commands = [f"{command} [{', '.join(COMMAND_DESCRIPTIONS[command])}]" for command in commands_list]
-    middle = len(formatted_commands) // 2
-    left_column = formatted_commands[:middle]
-    right_column = formatted_commands[middle:]
-    formatted_output = "\n".join(f"{left:<{column_width}} {right}" for left, right in zip(left_column, right_column))
-    return formatted_output
+    # num_columns = 2
+    # column_width = 50
+    # commands_list = list(COMMAND_DESCRIPTIONS.keys())
+    # formatted_commands = [f"{command} [{', '.join(COMMAND_DESCRIPTIONS[command])}]" for command in commands_list]
+    # middle = len(formatted_commands) // 2
+    # left_column = formatted_commands[:middle]
+    # right_column = formatted_commands[middle:]
+    # formatted_output = "\n".join(f"{left:<{column_width}} {right}" for left, right in zip(left_column, right_column))
+    # print(formatted_output)
+    print(Fore.GREEN, "Доступні команди:")
+    separator = '|----------------------|-----------------------------------------|'
+    print(separator, f'\n|       Команди        |      Опис {" ":30}|\n', separator, sep='')
+    for description, commands in COMMAND_DESCRIPTIONS.items():  # generic way when we add new action
+        print(f"| {Fore.WHITE} {', '.join(commands):<20}{Fore.GREEN}| {description:<40}|")
+    print(separator, '\n')
+
 
 def command_parser(user_input: str) -> tuple[callable, str]:
     """
@@ -76,6 +132,7 @@ def command_parser(user_input: str) -> tuple[callable, str]:
         raise ValueError(f"There is no such command {user_input.split()[0]}")
     return func, data
 
+
 def validate_input(prompt, validator=None, error_message=None,transform_func=None):
     """
     Prompt the user for input and validate it using a specified validator function.
@@ -90,6 +147,7 @@ def validate_input(prompt, validator=None, error_message=None,transform_func=Non
                 print(error_message)
             continue
         return user_input
+
 
 validation_info = {
     "name": {
@@ -141,6 +199,7 @@ def handle_add_email(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_add_phone_number(arg: str, address_book: AddressBook) -> str:
     name = validate_input(**validation_info["name"])
     contact = address_book.get_record_by_name(name)
@@ -154,6 +213,7 @@ def handle_add_phone_number(arg: str, address_book: AddressBook) -> str:
             return "Не вдалося додати номер телефону. Номер не валідний."
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+
 
 def handle_add_record(arg: str, address_book: AddressBook) -> str:
     """
@@ -177,6 +237,7 @@ def handle_add_record(arg: str, address_book: AddressBook) -> str:
     else:
         return "Не вдалося додати контакт. Дані не валідні."
 
+
 def handle_change_email(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'change_email' command. Changes the email address of a contact.
@@ -193,6 +254,7 @@ def handle_change_email(arg: str, address_book: AddressBook) -> str:
             return f"Адресу електронної пошти успішно змінено. \n{address_book.get_all_records()}"
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+
 
 def handle_change_phone_number(arg: str, address_book: AddressBook) -> str:
     """
@@ -211,6 +273,7 @@ def handle_change_phone_number(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     """
      Command handler for 'days_to_birthday' command. Calculates the
@@ -228,11 +291,13 @@ def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_exit(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'exit' command. Exits the address book application.
     """
-    return 'Goodbye!'
+    return handle_save_to_file(arg, address_book) + '\nGoodbye!'
+
 
 def handle_find_records(arg: str, address_book: AddressBook) -> str:
     """
@@ -264,12 +329,14 @@ def handle_find_records(arg: str, address_book: AddressBook) -> str:
     else:
         return "Контакт за вказаними критеріями не знайдений."
 
+
 def handle_get_all_records(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'get_all_records' command. Retrieves and
     returns all records in the address book.
     """
     return address_book.get_all_records()
+
 
 def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
     """
@@ -284,22 +351,32 @@ def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
             if birthdays_list:
                 return "\n".join(birthdays_list)
             else:
-                return "На цьому тижні немає іменнинників."
+                return f"Через {num_str} дні(в) немає іменнинників."
         else:
             print("Будь ласка, введіть ціле число.")
             continue
+
+
+def handle_help(arg: str, address_book: AddressBook) -> str:
+    """Outputs the command menu"""
+    print_command_list()
+    return ''
+
 
 def handle_load_from_file(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'load_from_file' command. Loads the address
     book data from a file.
     """
-    file_handler = AddressBookFileHandler("address_book.json")
+    arg = arg.strip()
+    file_handler = AddressBookFileHandler(str(FILE_PATH))
     loaded_address_book = file_handler.load_from_file()
+    address_book.data.update(loaded_address_book.data)
     if loaded_address_book:
-        return "Адресну книгу завантажено з файлу."
+        return f"Адресну книгу завантажено з файлу {str(FILE_PATH)}"
     else:
         return "Не вдалося завантажити адресну книгу з файлу."
+
 
 def handle_remove_email(arg: str, address_book: AddressBook) -> str:
     """
@@ -316,6 +393,7 @@ def handle_remove_email(arg: str, address_book: AddressBook) -> str:
             return f"Адресу електронної пошти успішно видалено. \n{address_book.get_all_records()}"
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+
 
 def handle_remove_phone_number(arg: str, address_book: AddressBook) -> str:
     """
@@ -335,6 +413,7 @@ def handle_remove_phone_number(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_remove_record(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'remove_record' command. Removes a contact from
@@ -346,46 +425,72 @@ def handle_remove_record(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт {name} не знайдено в адресній книзі або ще не додано жодного контакту."
 
+
 def handle_save_to_file(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'save_to_file' command. Saves the address
     book data to a file.
     """
-    file_handler = AddressBookFileHandler("address_book.json")
+    file_handler = AddressBookFileHandler(str(FILE_PATH))
     file_handler.save_to_file(address_book)
-    return "Адресну книгу збережено у файл."
+    return f"Адресну книгу збережено у файл {str(FILE_PATH)}"
+
 
 def input_error(func):
-    """Wrapper for handling errors"""
+    """
+    A decorator wrapper for error handling.
+
+    Args:
+        func (callable): The function to wrap with error handling.
+
+    Returns:
+        callable: The wrapped function with error handling.
+    """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
             result = func(*args, **kwargs)
             return result
+        except IndexError as e:
+            print(Fore.RED, 'Not enough data.', str(e))
         except ValueError as e:
-            print('Wrong value.', str(e))
+            print(Fore.RED, 'Wrong value.', str(e))
+        except KeyError as e:
+            print(Fore.RED, 'Wrong key.', str(e)[1:-1])
+        except TypeError as e:
+            print(Fore.RED, 'Wrong type of value.', str(e))
+        except FileNotFoundError as e:
+            print(Fore.RED, e)
+        except Exception as e:
+            print(Fore.RED, e)
     return wrapper
 
+
+@input_error
 def main_cycle(address_book: AddressBook) -> bool:
     """
     Return True if it needs to stop the program. False otherwise.
     """
-    user_input = input('>>> ').strip().lower()
-    try:
-        func, argument = command_parser(user_input)
-        result = func(argument, address_book)  # Передаємо адресну книгу як аргумент
-        print(result)
-        return result.endswith('Goodbye!')
-    except ValueError as e:
-        print('Помилка:', str(e))
+    completer = NestedCompleter.from_nested_dict({command[0]: None for command in COMMANDS.values()})
+    user_input = prompt('>>> ', completer=completer, lexer=RainbowLexer()).strip().lower()
+    func, argument = command_parser(user_input)
+    result = func(argument, address_book)  # Передаємо адресну книгу як аргумент
+    print(Fore.WHITE, result)
+    return result.endswith('Goodbye!')
+
 
 def prepare() -> None:
     """
     Prints initial information to the user
     :return: None
     """
-    print("Ласкаво просимо до адресної книги!")
-    print(print_command_list())
+    init_colorama()
+    print(Fore.BLUE + Style.BRIGHT + ADDRESSBOOK_LOGO)
+    print(Fore.CYAN + "Welcome to your ADDRESS BOOK!")
+    print()
+    print_command_list()
+
 
 def main():
     """
@@ -394,7 +499,7 @@ def main():
     the environment, and enters the main program loop.
     """
     address_book = AddressBook()  # Створюємо об'єкт адресної книги
-
+    handle_load_from_file('', address_book)
     prepare()
 
     while True:

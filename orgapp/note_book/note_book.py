@@ -94,6 +94,12 @@ def handle_exit(args: str) -> str:
     return handle_save_notes("") + "\nGoodbye!"
 
 
+def handle_help(args: str) -> str:
+    """outputs this list of commands"""
+    print_menu()
+    return ''
+
+
 def handle_load_notes(args: str) -> str:
     """loads notes from the given file"""
     filename = args if args else input("Enter the filename to load: ")
@@ -114,9 +120,7 @@ def handle_find_by_tag(args: str) -> str:
     search_results = NOTE_MANAGER.search_by_tag(tag)
     if search_results:
         result_str = "Search results:\n"
-        for idx, result in enumerate(search_results, 1):
-            result_str += f"{idx}. Title: {result.title}\n"
-            result_str += f"   Text: {result.content}\n"
+        result_str += NoteManager.string_from_list(search_results)
         return result_str
     else:
         return "No notes found for this tag." 
@@ -128,9 +132,7 @@ def handle_search_notes(args: str) -> str:
     search_results = NOTE_MANAGER.search_notes(keyword)
     if search_results:
         result_str = "Search results:\n"
-        for idx, result in enumerate(search_results, 1):
-            result_str += f"{idx}. Title: {result.title}\n"
-            result_str += f"   Text: {result.content}\n"
+        result_str += NoteManager.string_from_list(search_results)
         return result_str
     else:
         return "No notes found for this keyword."
@@ -141,8 +143,7 @@ def handle_view_all_notes(args: str) -> str:
     all_notes = NOTE_MANAGER.get_all_notes()
     if all_notes:
         result_str = "All notes:\n"
-        for idx, note in enumerate(all_notes, 1):
-            result_str += f"{idx}. Title: {note.title}\n   Text: {note.content}\n"
+        result_str += NoteManager.string_from_list(all_notes)
         return result_str
     else:
         return " There are no notes."
@@ -174,6 +175,8 @@ def input_error(func):
             print(Fore.RED, 'Wrong type of value.', str(e))
         except FileNotFoundError as e:
             print(Fore.RED, e)
+        except Exception as e:
+            print(Fore.RED, e)
     return wrapper
 
 
@@ -204,7 +207,7 @@ def prepare() -> None:
     """
     init_colorama()
     print(Fore.BLUE + Style.BRIGHT + NOTEBOOK_LOGO)
-    print("Welcome to your note-taking app!")
+    print(Fore.CYAN + "Welcome to your note-taking app!")
     print()
     print_menu()  # Display the menu with commands
 
@@ -226,10 +229,11 @@ COMMANDS_LISTS = {
     handle_edit_note: ['edit'],
     handle_exit: ["bye", 'close', 'exit', 'goodbye'],
     handle_delete_note: ["delete"],
+    handle_find_by_tag: ['tag', "find_tag", 'search_tag'],
+    handle_help: ['help'],
     handle_load_notes: ["load"],
     handle_save_notes: ['save'],
     handle_search_notes: ['find', 'search'],
-    handle_find_by_tag: ['tag', "find_tag", 'search_tag'],
 }
 COMMANDS = {command: func for func, commands in COMMANDS_LISTS.items() for command in commands}
 
