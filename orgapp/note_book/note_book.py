@@ -2,6 +2,10 @@ from classes_nb import NoteManager
 from colorama import init as init_colorama, Fore, Back, Style
 from functools import wraps
 from pathlib import Path
+from prompt_toolkit.lexers import Lexer
+from prompt_toolkit.styles.named_colors import NAMED_COLORS
+from prompt_toolkit.completion import NestedCompleter
+from prompt_toolkit import prompt
 
 
 FILE_PATH = Path.home() / "orgApp" / "notes.json"  # for working on different filesystems

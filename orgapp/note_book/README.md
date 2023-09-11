@@ -43,3 +43,8 @@ a part of a greater orgApp application.
 
 
 Simple example of using:
+
+>>> add
+Enter note title: Love
+Enter note text: This is a wonderful and amazing feeling!
+Note added successfully.
