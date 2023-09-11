@@ -37,10 +37,10 @@ COMMANDS = {
     'quit': close_program,
 }
 
-completer = NestedCompleter.from_nested_dict({command: None for command in COMMANDS.keys()})
 
 def get_command() -> str:
     """Gets and returns str command from user"""
+    completer = NestedCompleter.from_nested_dict({command: None for command in COMMANDS.keys()}) 
     while True:
         command = prompt('>>>', completer=completer, lexer=RainbowLexer()).strip()
         if command in COMMANDS:
