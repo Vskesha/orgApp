@@ -2,7 +2,7 @@ from colorama import init as init_colorama, Fore, Back, Style
 from pathlib import Path
 import re
 import shutil
-
+import sys
 
 CYRYLIC = 'абвгґдеєжзиіїйклмнопрстуфхцчшщьюяёъы'
 LATIN = (
