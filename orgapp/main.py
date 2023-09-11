@@ -1,6 +1,8 @@
 import sys
-sys.path.extend(['sorter', 'note_book', 'address_book', 'tictactoe'])
+sys.path.extend(['sorter', 'note_book', 'address_book', 'tictactoe',
+                 'bandergoose'])
 from address_book import main as address_main
+# from bandergoose import main as bandergoose_main
 from colorama import init as init_colorama, Fore, Back, Style
 from note_book import main as note_main
 from prompt_toolkit.lexers import Lexer
@@ -34,6 +36,7 @@ def close_program():
 COMMANDS = {
     'ab': address_main,
     'addressbook': address_main,
+    # 'bandergoose': bandergoose_main,
     'exit': close_program,
     'note': note_main,
     'notebook': note_main,
