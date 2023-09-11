@@ -55,20 +55,29 @@ def command_parser(user_input: str) -> tuple[callable, str]:
 def handle_add_note(args: str) -> str:
     """adds note to your NoteBook"""
     title = input("Enter note title: ")
+    if not title.strip():
+        raise ValueError('Title cannot be empty')
+    if title in NOTE_MANAGER.get_titles():
+        raise ValueError(f'Note with title "{title}" already exist')
     content = input("Enter note text: ")
-    NOTE_MANAGER.add_note(title, content)
+    tags = input("Enter note tags: ")
+    NOTE_MANAGER.add_note(title, content, tags.split())
     return "Note added successfully."
 
 
-def handle_add_tag(agrs: str) -> str:
+def handle_add_tags(agrs: str) -> str:
     """add tag to note"""
     title = input("Enter note title: ")
-    tag = input("Enter tag: ")
-    result = NOTE_MANAGER.add_tag_to_note(title, tag)
+    if title not in NOTE_MANAGER.get_titles():
+        raise KeyError(f'Note with title "{title}" not found')
+    tags = input("Enter tag: ").split()
+    result = False
+    for tag in tags:
+        result = NOTE_MANAGER.add_tag_to_note(title, tag)
     if result:
-        return "Tag added successfully."
+        return "Tags added successfully."
     else:
-        return "Note not found."
+        return "Tags not added"
 
 
 def handle_delete_note(args: str) -> str:
@@ -189,7 +198,7 @@ def main_cycle() -> bool:
     user_input = prompt('>>> ', completer=completer, lexer=RainbowLexer())
     func, argument = command_parser(user_input)
     result = func(argument)
-    print(Fore.BLUE, result)
+    print(Fore.LIGHTYELLOW_EX, result)
     return result.endswith('Goodbye!')
 
 
@@ -224,7 +233,7 @@ def print_menu():
 # Map of commands and their corresponding handler functions
 COMMANDS_LISTS = {
     handle_add_note: ["add", 'plus'],
-    handle_add_tag: ["add_tag"],
+    handle_add_tags: ["add_tags"],
     handle_view_all_notes: ['all', 'all_notes', 'view'],
     handle_edit_note: ['edit'],
     handle_exit: ["bye", 'close', 'exit', 'goodbye'],
