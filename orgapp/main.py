@@ -10,6 +10,7 @@ from prompt_toolkit.styles.named_colors import NAMED_COLORS
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
 from sorter import clean_folder
+from snake import main as snake_main
 from tictactoe import main as tictactoe_main
 
 
@@ -42,6 +43,7 @@ COMMANDS = {
     'notebook': note_main,
     'quit': close_program,
     'sorter': clean_folder,
+    'snake': snake_main,
     'tictactoe': tictactoe_main,
 }
 
