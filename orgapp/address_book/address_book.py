@@ -68,6 +68,7 @@ COMMAND_DESCRIPTIONS = {
 FILE_PATH = Path.home() / "orgApp" / "address_book.json"  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
 
+
 class RainbowLexer(Lexer):
     """
     Lexer for rainbow syntax highlighting.
@@ -85,6 +86,7 @@ class RainbowLexer(Lexer):
             ]
 
         return get_line
+
 
 def print_command_list():
     """
@@ -275,6 +277,7 @@ def handle_change_email(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_change_phone_number(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'change_phone_number' command. Changes the phone number of a contact.
@@ -303,6 +306,7 @@ def handle_change_phone_number(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     """
      Command handler for 'days_to_birthday' command. Calculates the
@@ -310,7 +314,7 @@ def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я для того щоб дізнатися дань народження контакту."
+        return "Не вдалося ввести ім'я для того щоб дізнатися день народження контакту."
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
@@ -322,11 +326,13 @@ def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_exit(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'exit' command. Exits the address book application.
     """
-    return 'Goodbye!'
+    return handle_save_to_file(arg, address_book) + '\nGoodbye!'
+
 
 def handle_find_records(arg: str, address_book: AddressBook) -> str:
     """
@@ -356,12 +362,14 @@ def handle_find_records(arg: str, address_book: AddressBook) -> str:
     else:
         return "Контакт за вказаними критеріями не знайдений."
 
+
 def handle_get_all_records(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'get_all_records' command. Retrieves and
     returns all records in the address book.
     """
     return address_book.get_all_records()
+
 
 def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
     """
@@ -379,18 +387,27 @@ def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
     else:
         return "Ви ввели не число. Попробуйте знову запустити команду!!!"
 
+
+
+def handle_help(arg: str, address_book: AddressBook) -> str:
+    """Outputs the command menu"""
+    print_command_list()
+    return ''
+
+
 def handle_load_from_file(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'load_from_file' command. Loads the address
     book data from a file.
     """
     arg = arg.strip()
-    file_handler = AddressBookFileHandler(FILE_PATH)
+    file_handler = AddressBookFileHandler(str(FILE_PATH))
     loaded_address_book = file_handler.load_from_file()
     if loaded_address_book:
-        return f"Адресну книгу завантажено з файлу, який знаходиться за шляхом {FILE_PATH}"
+        return f"Адресну книгу завантажено з файлу {str(FILE_PATH)}"
     else:
         return "Не вдалося завантажити адресну книгу з файлу."
+
 
 def handle_remove_email(arg: str, address_book: AddressBook) -> str:
     """
@@ -414,6 +431,7 @@ def handle_remove_email(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_remove_phone_number(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'remove_phone_number' command. Removes a phone
@@ -435,6 +453,7 @@ def handle_remove_phone_number(arg: str, address_book: AddressBook) -> str:
             return "Не вдалося видалити номер телефону"
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+
 
 def handle_remove_record(arg: str, address_book: AddressBook) -> str:
     """
@@ -492,6 +511,7 @@ def input_error(func):
             print(Fore.RED, e)
     return wrapper
 
+
 @input_error
 def main_cycle(address_book: AddressBook) -> bool:
     """
@@ -504,6 +524,7 @@ def main_cycle(address_book: AddressBook) -> bool:
     print(Fore.WHITE, result)
     return result.endswith('Goodbye!')
 
+
 def prepare() -> None:
     """
     Prints initial information to the user
@@ -514,6 +535,7 @@ def prepare() -> None:
     print(Fore.CYAN + "Welcome to your ADDRESS BOOK!")
     print()
     print_command_list()
+
 
 def main():
     """
