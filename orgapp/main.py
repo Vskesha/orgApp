@@ -1,9 +1,10 @@
 import sys
 sys.path.extend(['sorter', 'note_book', 'address_book', 'tictactoe',
-                 'bandergoose'])
+                 'bandergoose', 'snake', 'hannoitower'])
 from address_book import main as address_main
-# from bandergoose import main as bandergoose_main
+from bandergoose import main as bandergoose_main
 from colorama import init as init_colorama, Fore, Back, Style
+from hannoitower import main as hannoi_main
 from note_book import main as note_main
 from prompt_toolkit.lexers import Lexer
 from prompt_toolkit.styles.named_colors import NAMED_COLORS
@@ -37,8 +38,9 @@ def close_program():
 COMMANDS = {
     'ab': address_main,
     'addressbook': address_main,
-    # 'bandergoose': bandergoose_main,
+    'bandergoose': bandergoose_main,
     'exit': close_program,
+    'hannoitower': hannoi_main,
     'note': note_main,
     'notebook': note_main,
     'quit': close_program,
@@ -66,8 +68,11 @@ def main():
     """
     init_colorama()
     print_menu()
-    subprogram = COMMANDS[get_command()]
-    subprogram()
+    try:
+        subprogram = COMMANDS[get_command()]
+        subprogram()
+    except Exception:
+        print('Something wrong. Sorry ...')
 
 
 def print_menu():
