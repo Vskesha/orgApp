@@ -31,9 +31,9 @@ d88' `88b `888""8P 888' `88b     .8' `888.     888' `88b  888' `88b
 """
 
 
-def close_program() -> bool:
+def close_program() -> str:
     print(f'{Fore.GREEN}Goodbye!')
-    return True
+    return 'exit'
 
 
 COMMANDS = {
@@ -72,7 +72,7 @@ def main():
         print_menu()
         try:
             subprogram = COMMANDS[get_command()]
-            if subprogram():
+            if subprogram() == 'exit':
                 break
         except Exception:
             print('Something wrong. Sorry ...')
