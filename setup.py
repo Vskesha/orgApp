@@ -37,15 +37,15 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            "orgapp = main:main"
-            "addressbook = address_book.address_book:main"
-            "notebook = note_book.note_book:main"
-            "sorter = sorter.sorter:clean_folder"
+            "orgapp = main:main",
+            "addressbook = address_book.address_book:main",
+            "notebook = note_book.note_book:main",
+            "sorter = sorter.sorter:clean_folder",
         ],
-        'gui-scripts': [
-            "bandergoose = bandergoose.bandergoose:main"
-            "hannoitower = hannoitower.hannoitower:main"
-            "snake = snake.snake:main"
+        'gui_scripts': [
+            "bandergoose = bandergoose.bandergoose:main",
+            "hannoitower = hannoitower.hannoitower:main",
+            "snake = snake.snake:main",
             "tictactoe = tictactoe.tictactoe:main"
         ]
     }
