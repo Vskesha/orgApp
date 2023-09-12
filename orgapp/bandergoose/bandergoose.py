@@ -4,9 +4,6 @@ import pygame
 from pygame.constants import QUIT, K_DOWN, K_UP, K_LEFT, K_RIGHT
 
 
-pygame.init()
-
-FPS = pygame.time.Clock()
 HEIGHT = 700
 WIDTH = 1200
 COLOR_WHITE = (255, 255, 255)
@@ -14,13 +11,11 @@ COLOR_BLACK = (0, 0, 0)
 COLOR_BLUE = (0, 0, 255)
 COLOR_GREEN = (0, 255, 0)
 COLOR_RED = (255, 0, 0)
-FONT = pygame.font.SysFont('Verdana', 25)
-GAME_OVER_FONT = pygame.font.SysFont('Verdana_bold', 200)
-PLAYER_IMAGES = [f'1-{i}.png' for i in range(1, 6)]
+PLAYER_IMAGES = [f'orgapp/bandergoose/1-{i}.png' for i in range(1, 6)]
 
 
 def create_enemy():
-    enemy = pygame.image.load('enemy.png').convert_alpha()
+    enemy = pygame.image.load('orgapp/bandergoose/enemy.png').convert_alpha()
     enemy_size = (enemy.get_width(), enemy.get_height())
     enemy_rect = pygame.Rect(WIDTH, random.randint(enemy_size[1], HEIGHT-2*enemy_size[1]), *enemy_size)
     enemy_move = [random.randint(-8, -4), 0]
@@ -28,7 +23,7 @@ def create_enemy():
 
 
 def create_bonus():
-    bonus = pygame.image.load('bonus.png').convert_alpha()
+    bonus = pygame.image.load('orgapp/bandergoose/bonus.png').convert_alpha()
     bonus_size = (bonus.get_width(), bonus.get_height())
     bonus_rect = pygame.Rect(random.randint(bonus_size[0], WIDTH-2*bonus_size[0]), -bonus_size[1], *bonus_size)
     bonus_move = [0, random.randint(4, 8)]
@@ -36,13 +31,16 @@ def create_bonus():
 
 
 def main():
+    pygame.init()
+    FONT = pygame.font.SysFont('Verdana', 25)
+    GAME_OVER_FONT = pygame.font.SysFont('Verdana_bold', 200)
     main_display = pygame.display.set_mode((WIDTH, HEIGHT))
-    bg_image = pygame.image.load('background.png')
+    bg_image = pygame.image.load('orgapp/bandergoose/background.png')
     bg = pygame.transform.scale(bg_image, (WIDTH, HEIGHT))
     bg_x1, bg_x2 = 0, bg.get_width()
     bg_move = 3
 
-    player = pygame.image.load('player.png').convert_alpha()
+    player = pygame.image.load('orgapp/bandergoose/player.png').convert_alpha()
     player_size = (player.get_width(), player.get_height())
     player_rect = pygame.Rect(0, (HEIGHT - player_size[1]) // 2, *player_size)
     player_move_down = [0, 5]
@@ -65,6 +63,7 @@ def main():
     image_index = 0
 
     while playing:
+        FPS = pygame.time.Clock()
         FPS.tick(150)
 
         for event in pygame.event.get():
@@ -107,12 +106,11 @@ def main():
             enemy[1] = enemy[1].move(enemy[2])
             if player_rect.colliderect(enemy[1]):
                 playing = False
-                explosion = pygame.image.load('explosion.png').convert_alpha()
+                explosion = pygame.image.load('orgapp/bandergoose/explosion.png').convert_alpha()
                 enemy[1] = enemy[1].move(-150,-150)
                 main_display.blit(explosion, enemy[1])
             else:
                 main_display.blit(enemy[0], enemy[1])
-
 
         for bonus in bonuses:
             bonus[1] = bonus[1].move(bonus[2])
@@ -120,7 +118,6 @@ def main():
             if player_rect.colliderect(bonus[1]):
                 score += 1
                 bonuses.pop(bonuses.index(bonus))
-
         main_display.blit(FONT.render(f'Рахунок: {score}', True, COLOR_BLACK), (WIDTH-150, 20))
         pygame.display.flip()
 
@@ -136,7 +133,6 @@ def main():
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit_game = True
-
         main_display.blit(GAME_OVER_FONT.render('GAME OVER', True, COLOR_RED), (200, 300))
         pygame.display.flip()
 
