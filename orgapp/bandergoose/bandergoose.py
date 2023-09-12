@@ -16,8 +16,7 @@ COLOR_GREEN = (0, 255, 0)
 COLOR_RED = (255, 0, 0)
 FONT = pygame.font.SysFont('Verdana', 25)
 GAME_OVER_FONT = pygame.font.SysFont('Verdana_bold', 200)
-IMAGE_PATH = 'goose'
-PLAYER_IMAGES = sorted(os.listdir(IMAGE_PATH))
+PLAYER_IMAGES = [f'1-{i}.png' for i in range(1, 6)]
 
 
 def create_enemy():
@@ -77,7 +76,7 @@ def main():
             if event.type == CREATE_BONUS:
                 bonuses.append(create_bonus())
             if event.type == CHANGE_IMAGE:
-                player = pygame.image.load(os.path.join(IMAGE_PATH, PLAYER_IMAGES[image_index]))
+                player = pygame.image.load(os.path.join(PLAYER_IMAGES[image_index]))
                 image_index += 1
                 if image_index >= len(PLAYER_IMAGES):
                     image_index = 0
