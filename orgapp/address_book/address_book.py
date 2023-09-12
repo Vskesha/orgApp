@@ -150,6 +150,7 @@ def validate_input(prompt, validator=None, error_message=None, final_error_messa
         user_input = transform_func(user_input)
     return user_input
 
+
 validation_info = {
     "name": {
         "prompt": "Введіть ім'я контакту: ",
@@ -182,6 +183,7 @@ validation_info = {
     },
     }
 
+
 # Функції-обробники команд
 def handle_add_email(arg: str, address_book: AddressBook) -> str:
     """
@@ -206,6 +208,7 @@ def handle_add_email(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
 
+
 def handle_add_phone_number(arg: str, address_book: AddressBook) -> str:
     name = validate_input(**validation_info["name"])
     if name is None:
@@ -224,6 +227,7 @@ def handle_add_phone_number(arg: str, address_book: AddressBook) -> str:
             return f"Номер {new_phone} не додано, бо він вже існує у контакта {name}!!!"
     else:
         return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+
 
 def handle_add_record(arg: str, address_book: AddressBook) -> str:
     """
@@ -247,6 +251,7 @@ def handle_add_record(arg: str, address_book: AddressBook) -> str:
         return f"Контакт успішно додано до адресної книги. \n{address_book.get_all_records()}"
     else:
         return "Дані не валідні."
+
 
 def handle_change_email(arg: str, address_book: AddressBook) -> str:
     """
@@ -388,7 +393,6 @@ def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
         return "Ви ввели не число. Попробуйте знову запустити команду!!!"
 
 
-
 def handle_help(arg: str, address_book: AddressBook) -> str:
     """Outputs the command menu"""
     print_command_list()
@@ -401,14 +405,13 @@ def handle_load_from_file(arg: str, address_book: AddressBook) -> str:
     book data from a file.
     """
     arg = arg.strip()
-    arg = arg or str(FILE_PATH)
+    if arg and (not Path(arg).exists() or not Path(arg).is_file()):
+        return f"Шлях до файлу не існує"
+    arg = arg if arg else str(FILE_PATH)
     file_handler = AddressBookFileHandler(arg)
     loaded_address_book = file_handler.load_from_file()
     address_book.data.update(loaded_address_book.data)
-    if loaded_address_book:
-        return f"Адресну книгу завантажено з файлу {str(FILE_PATH)}"
-    else:
-        return "Не вдалося завантажити адресну книгу з файлу."
+    return f"Адресну книгу завантажено з файлу {arg}"
 
 
 def handle_remove_email(arg: str, address_book: AddressBook) -> str:
@@ -470,10 +473,6 @@ def handle_remove_record(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Контакт {name} не знайдено в адресній книзі або ще не додано книги."
 
-def handle_help(arg: str, address_book: AddressBook) -> str:
-    """Outputs the command menu"""
-    print_command_list()
-    return ''
 
 def handle_save_to_file(arg: str, address_book: AddressBook) -> str:
     """
@@ -483,6 +482,7 @@ def handle_save_to_file(arg: str, address_book: AddressBook) -> str:
     file_handler = AddressBookFileHandler(str(FILE_PATH))
     file_handler.save_to_file(address_book)
     return f"Адресну книгу збережено за шляхом {str(FILE_PATH)}"
+
 
 def input_error(func):
     """
@@ -546,7 +546,7 @@ def main():
     the environment, and enters the main program loop.
     """
     address_book = AddressBook()
-    handle_load_from_file('', address_book)
+    print(handle_load_from_file('', address_book))
     prepare()
 
     while True:
@@ -556,5 +556,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
