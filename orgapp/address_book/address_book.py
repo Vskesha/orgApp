@@ -1,4 +1,4 @@
-from classes_ab import AddressBook, Record, AddressBookFileHandler, Phone, Email, Birthday, Name
+from .classes_ab import AddressBook, Record, AddressBookFileHandler, Phone, Email, Birthday, Name
 from functools import wraps
 from colorama import init as init_colorama, Fore, Style
 from prompt_toolkit.lexers import Lexer
