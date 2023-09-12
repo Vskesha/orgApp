@@ -401,8 +401,10 @@ def handle_load_from_file(arg: str, address_book: AddressBook) -> str:
     book data from a file.
     """
     arg = arg.strip()
-    file_handler = AddressBookFileHandler(str(FILE_PATH))
+    arg = arg or str(FILE_PATH)
+    file_handler = AddressBookFileHandler(arg)
     loaded_address_book = file_handler.load_from_file()
+    address_book.data.update(loaded_address_book.data)
     if loaded_address_book:
         return f"Адресну книгу завантажено з файлу {str(FILE_PATH)}"
     else:
