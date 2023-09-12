@@ -1,5 +1,5 @@
 # orgApp
-personal organizing tool
+## personal organizing tool
 
 <pre>
                                     .o.                             
@@ -13,7 +13,7 @@ d88' `88b `888""8P 888' `88b     .8' `888.     888' `88b  888' `88b
                    "Y88888P'                  o888o      o888o      
 </pre>
 
-### to install `clean-folder` package:
+### to install `orgApp` package:
 
 * clone this repository
 * browse in terminal to root folder which contain `pyproject.toml`
