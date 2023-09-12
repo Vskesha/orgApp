@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orgApp"
+version = "0.0.1"
+authors = [
+  { name="Vasyl Boliukh", email="vskesha@gmail.com" },
+  { name="Olga Sirenko", email="olga19022020@gmail.com" },
+  { name="Oleh Kolobaiev", email="o.kolobaiev@gmail.com" },
+  { name="Andriy Batig", email="ashabatig1992@gmail.com" },
+  { name="Nataliya Schvab", email="shnataliya77@gmail.com" },
+]
+description = "personal organizing tool"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "colorama==0.4.6",
+    "prompt-toolkit==3.0.39",
+    "pygame==2.5.1",
+    "wcwidth==0.2.6",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Vskesha/orgApp"
+"Bug Tracker" = "https://github.com/Vskesha/orgApp/issues"
+
+[tool.setuptools]
+include-package-data = true
+packages = [
+    "orgapp",
+    "orgapp.address_book",
+    "orgapp.bandergoose",
+    "orgapp.hannoitower",
+    "orgapp.note_book",
+    "orgapp.snake",
+    "orgapp.sorter",
+    "orgapp.tictactoe"
+]
+#OR
+#[tool.setuptools.packages]
+#find = {}  # Scan the project directory with the default parameters
+
+#OR
+#[tool.setuptools.packages.find]
+#where = [".", "orgapp"]  # ["."] by default
+#include = ["*"]  # ["*"] by default
+#exclude = []  # empty by default
+#namespaces = false  # true by default
+
+[project.scripts]
+orgapp = "main:main"
+addressbook = "address_book.address_book:main"
+notebook = "note_book.note_book:main"
+sorter = "sorter.sorter:clean_folder"
+
+[project.gui-scripts]
+bandergoose = "bandergoose.bandergoose:main"
+hannoitower = "hannoitower.hannoitower:main"
+snake = "snake.snake:main"
+tictactoe = "tictactoe.tictactoe:main"
+
+[options.package_data]
+orgapp = "*.md"
+orgapp.address_book = "*.md"
+orgapp.bandergoose = "*.png"
+orgapp.hannoitower = "*.md"
+orgapp.note_book = "*.md"
+orgapp.snake = "*.md"
+orgapp.sorter = "*.md"
+orgapp.tictactoe = "*.md"
