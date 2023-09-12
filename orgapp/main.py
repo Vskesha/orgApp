@@ -31,8 +31,9 @@ d88' `88b `888""8P 888' `88b     .8' `888.     888' `88b  888' `88b
 """
 
 
-def close_program():
+def close_program() -> bool:
     print(f'{Fore.GREEN}Goodbye!')
+    return True
 
 
 COMMANDS = {
@@ -67,12 +68,14 @@ def main():
     This is start point of our orgApp
     """
     init_colorama()
-    print_menu()
-    try:
-        subprogram = COMMANDS[get_command()]
-        subprogram()
-    except Exception:
-        print('Something wrong. Sorry ...')
+    while True:
+        print_menu()
+        try:
+            subprogram = COMMANDS[get_command()]
+            if subprogram():
+                break
+        except Exception:
+            print('Something wrong. Sorry ...')
 
 
 def print_menu():
