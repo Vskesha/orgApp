@@ -1,5 +1,3 @@
-# #АДРЕСНА КНИГА
-
 from collections import UserDict
 from datetime import datetime, timedelta
 import calendar
@@ -7,175 +5,177 @@ import re
 import json
 
 
-class AddressBook(UserDict):
+class Field:
     """
-    A class representing an address book that stores and
-    manages contact records.
+    A base class for representing fields with validation.
+    Args:
+        value: The initial value of the field.
     """
-    _instance = None
+    def __init__(self, value: str):
+        self.__value = None
+        self.value = value
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(AddressBook, cls).__new__(cls)
-            cls._instance.data = {}
-        return cls._instance
-    def add_record(self, record: 'Record') -> bool:
+    def validate(self, new_value: str) -> bool:
         """
-        Adds a contact record to the address book
-        if it passes validation.
+        Validates a new value for the field.
         """
-        if self.validate_record(record):
-            key = record.name.value
-            self.data[key] = record
-            return True
-        else:
-            return False
+        return True
 
-    def find_records(self, **search_criteria: dict) -> list:
+    @property
+    def value(self) -> str:
         """
-        Finds and returns a list of contact records that
-        match the given search criteria.
+        Property representing the field's value.
         """
-        result = []
-        found = False
-        for record in self.data.values():
-            if 'name' in search_criteria and len(search_criteria['name']) >= 2 and search_criteria[
-                'name'] in record.name.value:
-                result.append(record)
-                found = True
-            if 'phones' in search_criteria and len(search_criteria['phones']) >= 5:
-                for phone in record.phones:
-                    if search_criteria['phones'] in phone.value:
-                        result.append(record)
-                        found = True
-                        break
-        if not found:
-            print("There is no contact that matches the specified search criteria.")
-        return result
+        return self.__value
 
-    def get_all_records(self) -> str:
+    @value.setter
+    def value(self, new_value: str) -> None:
         """
-        Retrieves all contact records in the address
-        book and returns them.
+        Setter for the field's value.
         """
-        all_contacts = []
-        header = '{:<20} {:<30} {:<20} {:<20}'.format('Name', 'Phone', 'Birthday', 'Email')
-        separator = '-' * len(header)
-        all_contacts.append(header)
-        all_contacts.append(separator)
-
-        if self.data:
-            for record in self.data.values():
-                phones = ', '.join([f'{phone.value}' for phone in record.phones])
-                birthday_str = record.birthday.value if record.birthday else '-'
-                email_str = record.email.value if record.email else '-'
-                record_str = '{:<20} {:<30} {:<20} {:<20}'.format(
-                    record.name.value,
-                    phones,
-                    birthday_str,
-                    email_str
-                )
-                all_contacts.append(record_str)
-        else:
-            all_contacts.append("The address book is empty.")
-        return '\n'.join(all_contacts)
-
-    def get_birthdays_per_week(self, num: int) -> list:
-        """
-        Finds and returns a list of names whose birthdaуs
-        begin after a given number of days.
-        """
-        to_day = datetime.now().date()
-        new_date = to_day + timedelta(days=num)
-
-        happy_birthday = []
-        for record in self.data.values():
-            if record.birthday:
-                birthdate = datetime.strptime(record.birthday.value, '%d.%m.%Y').date()
-                if birthdate.day == new_date.day and birthdate.month == new_date.month:
-                    happy_birthday.append(record.name.value)
-
-        print(f'List of birthday celebrants to greet in {num} day(s): {happy_birthday}')
-        return happy_birthday
-
-    def get_record_by_name(self, name: str) -> 'Record':
-        """
-        Retrieves a contact record by searching for a name.
-        """
-        for record in self.data.values():
-            if record.name.value == name:
-                return record
-        return None
-
-    def remove_record(self, name: str) -> bool:
-        """
-        Removes a contact record by name.
-        """
-        if name in self.data:
-            del self.data[name]
-            return True
-        else:
-            return False
-
-    def validate_record(self, record: 'Record') -> bool:
-        """
-        Validates a contact record, including name,
-        phone numbers, birthday, and email.
-        """
-        valid_phones = all(isinstance(phone, Phone) and phone.validate(phone.value) for phone in record.phones)
-        valid_name = isinstance(record.name, Name)
-
-        if record.birthday:
-            valid_birthday = isinstance(record.birthday, Birthday) and record.birthday.validate(record.birthday.value)
-        else:
-            valid_birthday = True
-
-        if record.email:
-            valid_email = isinstance(record.email, Email) and record.email.validate(record.email.value)
-        else:
-            valid_email = True
-
-        if not valid_phones:
-            print("Phone numbers are not valid.")
-        if not valid_name:
-            print("Name is not valid.")
-        if not valid_birthday:
-            print("Date of birth is not valid.")
-        if not valid_email:
-            print("Email is not valid.")
-        return valid_phones and valid_name and valid_birthday and valid_email
-
-    def iterator(self, n: int) -> 'Record':
-        """
-        Splits the address book into iterators with 'n'
-        records per iteration.
-        """
-        return (list(self.data.values())[i:i + n] for i in range(0, len(self.data), n))
-
-    def __iter__(self) -> 'AddressBook':
-        """
-        Initializes the iterator for the address book.
-        """
-        self.index = 0
-        return self
-
-    def __next__(self) -> 'Record':
-        """
-        Iterates through the address book, returning one record at a time.
-        """
-        if self.index < len(self.data):
-            record = list(self.data.values())[self.index]
-            self.index += 1
-            return record
-        else:
-            raise StopIteration
+        self.__value = new_value
 
     def __str__(self)-> str:
         """
-        Returns a string representation of the address book.
+        Returns a string representation of the field's value.
         """
-        book_str = "\n".join(f"{name}: {record}" for name, record in self.data.items())
-        return book_str
+        return str(self.value)
+
+
+class Phone(Field):
+    """
+    A class representing a phone number field with validation.
+    Args:
+        value: The initial value of the phone number.
+    """
+    def __init__(self, value: str = None):
+        super().__init__(value)
+
+    @Field.value.setter
+    def value(self, new_value: str) -> str:
+        """
+        Setter method for the phone number field.
+         """
+        if self.validate(new_value):
+            Field.value.fset(self, new_value)
+        else:
+            return f'Номер телефону {new_value} не можна призначити, оскільки він не валідний'
+
+    def validate(self, number: str) -> bool:
+        """
+        Validates a new phone number value.
+        """
+        if number is None:
+            return False
+        try:
+            phone_format = r'\+380\d{9}'
+            if not re.match(phone_format, number):
+                return False
+            return True
+        except ValueError:
+            return False
+
+
+class Email(Field):
+    """
+    A class representing an email address field with validation.
+    Args:
+        value: The initial value of the email address..
+    """
+    def __init__(self, value: str = None):
+        super().__init__(value)
+
+    @Field.value.setter
+    def value(self, new_value: str) -> str:
+        """
+        Setter method for the email field.
+        """
+        if self.validate(new_value):
+            Field.value.fset(self, new_value)
+        else:
+            return f'Пошту {new_value} не можна призначити, вона не валідна'
+
+    def validate(self, email: str) -> bool:
+        """
+        Validates a email value.
+        """
+        if email is None:
+            return False
+        try:
+            email_format = r'\b(?![A-Za-z0-9._%+-]*a@t[A-Za-z0-9._%+-]*)\b(?![0-9]{2})[A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b'
+            if not re.match(email_format, email):
+                return False
+            return True
+        except ValueError:
+            return False
+
+
+class Name(Field):
+    """
+    A class representing a name field with validation.
+    Args:
+        value: The initial value of the name.
+    """
+    def __init__(self, value: str):
+        super().__init__(value)
+
+    @Field.value.setter
+    def value(self, new_value: str) -> str:
+        """
+        Setter method for the new name value.
+        """
+        if self.validate(new_value):
+            Field.value.fset(self, new_value)
+        else:
+            return f'Iм\'я {new_value} не можна призначити, воно не валідне'
+
+    def validate(self, name: str) -> bool:
+        """
+        Validates a new name value.
+        """
+        try:
+            name_format = r'^[A-Za-zА-Яа-я\s]+$'
+            if re.match(name_format, name) and len(name) > 1:
+                return True
+            return False
+        except ValueError:
+            return False
+
+
+class Birthday(Field):
+    """
+    A class representing a birthday field with validation.
+    Args:
+        value: The initial value of the birthday.
+    """
+    def __init__(self, value: str = None):
+        super().__init__(value)
+
+    @Field.value.setter
+    def value(self, new_value: str) -> str:
+        """
+        Setter method for the new birthday value.
+        """
+        if self.validate(new_value):
+            Field.value.fset(self, new_value)
+        else:
+            return f'Дату дня народження {new_value} не можна призначити, оскільки вона не валідна'
+
+    def validate(self, new_value: str) -> bool:
+        """
+        Validates a new birthday value.
+        """
+        try:
+            parsed_date = datetime.strptime(new_value, '%d.%m.%Y').date()
+            today = datetime.now().date()
+            if parsed_date > today:
+                return False
+            return True
+        except ValueError:
+            return False
+        except TypeError:
+            return False
+
 
 class Record:
     """
@@ -252,7 +252,7 @@ class Record:
             return True
         return False
 
-    def days_to_birthday(self) -> int:
+    def days_to_birthday(self) -> int | None:
         """
          Calculates the number of days remaining until the contact's next birthday.
         """
@@ -291,172 +291,170 @@ class Record:
             email_str = self.email.value
         return f"Name: {self.name.value}, Phones: {phones_str}, Email: {email_str}, Birthday: {birthday_str}"
 
-class Field:
+
+class AddressBook(UserDict):
     """
-    A base class for representing fields with validation.
-    Args:
-        value: The initial value of the field.
+    A class representing an address book that stores and
+    manages contact records.
     """
-    def __init__(self, value: str):
-        self.__value = None
-        self.value = value
-
-    def validate(self, new_value: str) -> bool:
+    def add_record(self, record: Record) -> bool:
         """
-        Validates a new value for the field.
+        Adds a contact record to the address book
+        if it passes validation.
         """
-        return True
-
-    @property
-    def value(self) -> str:
-        """
-        Property representing the field's value.
-        """
-        return self.__value
-
-    @value.setter
-    def value(self, new_value: str) -> None:
-        """
-        Setter for the field's value.
-        """
-        self.__value = new_value
-
-    def __str__(self)-> str:
-        """
-        Returns a string representation of the field's value.
-        """
-        return str(self.value)
-
-class Phone(Field):
-    """
-    A class representing a phone number field with validation.
-    Args:
-        value: The initial value of the phone number.
-    """
-    def __init__(self, value: str = None):
-        super().__init__(value)
-
-    @Field.value.setter
-    def value(self, new_value: str) -> str:
-        """
-        Setter method for the phone number field.
-         """
-        if self.validate(new_value):
-            Field.value.fset(self, new_value)
-        else:
-            return f'The phone number {new_value} cannot be assigned as it is not valid.'
-
-    def validate(self, number: str) -> bool:
-        """
-        Validates a new phone number value.
-        """
-        if number is None:
-            return False
-        try:
-            phone_format = r'\+380\d{9}'
-            if not re.match(phone_format, number):
-                return False
+        if self.validate_record(record):
+            key = record.name.value
+            self.data[key] = record
             return True
-        except ValueError:
-            return False
-
-class Email(Field):
-    """
-    A class representing an email address field with validation.
-    Args:
-        value: The initial value of the email address..
-    """
-    def __init__(self, value: str = None):
-        super().__init__(value)
-
-    @Field.value.setter
-    def value(self, new_value: str) -> str:
-        """
-        Setter method for the email field.
-        """
-        if self.validate(new_value):
-            Field.value.fset(self, new_value)
         else:
-            return f'The email {new_value} cannot be assigned as it is not valid.'
-
-    def validate(self, email: str) -> bool:
-        """
-        Validates a email value.
-        """
-        if email is None:
             return False
-        try:
-            email_format = r'\b(?![A-Za-z0-9._%+-]*a@t[A-Za-z0-9._%+-]*)\b(?![0-9]{2})[A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b'
-            if not re.match(email_format, email):
-                return False
+
+    def find_records(self, **search_criteria: dict) -> list:
+        """
+        Finds and returns a list of contact records that
+        match the given search criteria.
+        """
+        result = []
+        found = False
+        for record in self.data.values():
+            if 'name' in search_criteria and len(search_criteria['name']) >= 2 and search_criteria[
+                'name'] in record.name.value:
+                result.append(record)
+                found = True
+            if 'phones' in search_criteria and len(search_criteria['phones']) >= 5:
+                for phone in record.phones:
+                    if search_criteria['phones'] in phone.value:
+                        result.append(record)
+                        found = True
+                        break
+        if not found:
+            print("Немає контакту, що відповідає заданим критеріям пошуку")
+        return result
+
+    def get_all_records(self) -> str:
+        """
+        Retrieves all contact records in the address
+        book and returns them.
+        """
+        all_contacts = []
+        header = '{:<20} {:<30} {:<20} {:<20}'.format('Ім\'я', 'Телефон', 'День народження', 'Ел. пошта')
+        separator = '-' * len(header)
+        all_contacts.append(header)
+        all_contacts.append(separator)
+
+        if self.data:
+            for record in self.data.values():
+                phones = ', '.join([f'{phone.value}' for phone in record.phones])
+                birthday_str = record.birthday.value if record.birthday else '-'
+                email_str = record.email.value if record.email else '-'
+                record_str = '{:<20} {:<30} {:<20} {:<20}'.format(
+                    record.name.value,
+                    phones,
+                    birthday_str,
+                    email_str
+                )
+                all_contacts.append(record_str)
+        else:
+            all_contacts.append("Адресна книга порожня")
+        return '\n'.join(all_contacts)
+
+    def get_birthdays_per_week(self, num: int) -> list:
+        """
+        Finds and returns a list of names whose birthdaуs
+        begin after a given number of days.
+        """
+        to_day = datetime.now().date()
+        new_date = to_day + timedelta(days=num)
+
+        happy_birthday = []
+        for record in self.data.values():
+            if record.birthday:
+                birthdate = datetime.strptime(record.birthday.value, '%d.%m.%Y').date()
+                if birthdate.day == new_date.day and birthdate.month == new_date.month:
+                    happy_birthday.append(record.name.value)
+
+        print(f'Cписок іменнинників, яких треба вітати через {num} дні(ів): {happy_birthday}')
+        return happy_birthday
+
+    def get_record_by_name(self, name: str) -> 'Record':
+        """
+        Retrieves a contact record by searching for a name.
+        """
+        for record in self.data.values():
+            if record.name.value == name:
+                return record
+        return None
+
+    def remove_record(self, name: str) -> bool:
+        """
+        Removes a contact record by name.
+        """
+        if name in self.data:
+            del self.data[name]
             return True
-        except ValueError:
-            return False
-
-class Name(Field):
-    """
-    A class representing a name field with validation.
-    Args:
-        value: The initial value of the name.
-    """
-    def __init__(self, value: str):
-        super().__init__(value)
-
-    @Field.value.setter
-    def value(self, new_value: str) -> str:
-        """
-        Setter method for the new name value.
-        """
-        if self.validate(new_value):
-            Field.value.fset(self, new_value)
         else:
-            return f'The name {new_value} cannot be assigned as it is not valid.'
-
-    def validate(self, name: str) -> bool:
-        """
-        Validates a new name value.
-        """
-        try:
-            name_format = r'^[A-Za-zА-Яа-я\s]+$'
-            if re.match(name_format, name) and len(name) > 1:
-                return True
-            return False
-        except ValueError:
             return False
 
-class Birthday(Field):
-    """
-    A class representing a birthday field with validation.
-    Args:
-        value: The initial value of the birthday.
-    """
-    def __init__(self, value: str = None):
-        super().__init__(value)
+    def validate_record(self, record: Record) -> bool:
+        """
+        Validates a contact record, including name,
+        phone numbers, birthday, and email.
+        """
+        valid_phones = all(isinstance(phone, Phone) and phone.validate(phone.value) for phone in record.phones)
+        valid_name = isinstance(record.name, Name)
 
-    @Field.value.setter
-    def value(self, new_value: str) -> str:
-        """
-        Setter method for the new birthday value.
-        """
-        if self.validate(new_value):
-            Field.value.fset(self, new_value)
+        if record.birthday:
+            valid_birthday = isinstance(record.birthday, Birthday) and record.birthday.validate(record.birthday.value)
         else:
-            return f'The date of birth {new_value} cannot be assigned as it is not valid.'
+            valid_birthday = True
 
-    def validate(self, new_value: str) -> bool:
+        if record.email:
+            valid_email = isinstance(record.email, Email) and record.email.validate(record.email.value)
+        else:
+            valid_email = True
+
+        if not valid_phones:
+            print("Номери телефонів не валідні.")
+        if not valid_name:
+            print("Ім'я не валідне.")
+        if not valid_birthday:
+            print("Дата народження не валідна.")
+        if not valid_email:
+            print("Пошта не валідна.")
+        return valid_phones and valid_name and valid_birthday and valid_email
+
+    def iterator(self, n: int) -> Record:
         """
-        Validates a new birthday value.
+        Splits the address book into iterators with 'n'
+        records per iteration.
         """
-        try:
-            parsed_date = datetime.strptime(new_value, '%d.%m.%Y').date()
-            today = datetime.now().date()
-            if parsed_date > today:
-                return False
-            return True
-        except ValueError:
-            return False
-        except TypeError:
-            return False
+        return (list(self.data.values())[i:i + n] for i in range(0, len(self.data), n))
+
+    def __iter__(self):
+        """
+        Initializes the iterator for the address book.
+        """
+        self.index = 0
+        return self
+
+    def __next__(self) -> 'Record':
+        """
+        Iterates through the address book, returning one record at a time.
+        """
+        if self.index < len(self.data):
+            record = list(self.data.values())[self.index]
+            self.index += 1
+            return record
+        else:
+            raise StopIteration
+
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the address book.
+        """
+        book_str = "\n".join(f"{name}: {record}" for name, record in self.data.items())
+        return book_str
+
 
 class AddressBookFileHandler:
     """
@@ -467,59 +465,43 @@ class AddressBookFileHandler:
     def __init__(self, file_name: str):
         self.file_name = file_name
 
-    def save_to_file(self, address_book: 'AddressBook') -> None:
+    def save_to_file(self, address_book: AddressBook) -> None:
         """
         Serializes and saves an AddressBook to a file.
         """
         with open(self.file_name, 'w') as file:
             json.dump(address_book.data, file, default=self._serialize_record, indent=4)
 
-    def load_from_file(self) -> 'AddressBook':
-        """
-        Loads and deserializes an AddressBook from a file.
-        """
-        try:
-            with open(self.file_name, 'r') as file:
-                file_contents = file.read()
-                print(f"The data read from the file: {file_contents}")
-                if not file_contents.strip():
-                    print("The file is empty. Returning an empty address book.")
-                    return AddressBook()
-                try:
-                    data = json.loads(file_contents)
-                    if data is not None:
-                        address_book = AddressBook()
-                        for name, record_data in data.items():
-                            record = self._deserialize_record(record_data)
-                            if record:
-                                address_book.add_record(record)
-                        return address_book
-                    else:
-                        print("Failed to recognize data from the file.")
-                        return None
-                except json.JSONDecodeError as e:
-                    print(f"Failed to recognize data from the file. Error JSON: {e}")
-                    return None
-        except FileNotFoundError:
-            with open(self.file_name, 'w') as file:
-                file.write("{}")
-            return AddressBook()
-
-    def _deserialize_record(self, contact_data: dict) -> 'Record':
+    def _deserialize_record(self, contact_data: dict) -> Record:
         """
         Deserializes a contact record from a dictionary.
         """
-        print(f"Attempt to deserialize: {contact_data}")
         if isinstance(contact_data, str):
             return None
         name = contact_data.get('name')
         phones = contact_data.get('phones', [])
         birthday = contact_data.get('birthday')
         email = contact_data.get('email')
-        phones = [Phone(phone) if phone is not None else None for phone in phones]
-        return Record(name, phones[0] if phones else None, birthday, email)
+        record = Record(name, None, birthday, email)
+        for phone in phones:
+            record.add_phone_number(phone)
+        return record
 
-    def _serialize_record(self, record: 'Record') -> dict:
+    def load_from_file(self) -> AddressBook:
+        """
+        Loads and deserializes an AddressBook from a file.
+        """
+        addressbook = AddressBook()
+        try:
+            with open(self.file_name, 'r') as file:
+                records_data = json.load(file)
+                for contact_data in records_data.values():
+                    addressbook.add_record(self._deserialize_record(contact_data))
+        except FileNotFoundError:
+            pass
+        return addressbook
+
+    def _serialize_record(self, record: Record) -> dict:
         """
        Serializes a contact record to a dictionary.
         """
@@ -529,7 +511,3 @@ class AddressBookFileHandler:
             'birthday': record.birthday.value if record.birthday else None,
             'email': record.email.value if record.email else None
         }
-
-
-
-
