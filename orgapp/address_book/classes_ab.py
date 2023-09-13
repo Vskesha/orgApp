@@ -499,6 +499,8 @@ class AddressBookFileHandler:
                     addressbook.add_record(self._deserialize_record(contact_data))
         except FileNotFoundError:
             pass
+        except Exception:
+            pass
         return addressbook
 
     def _serialize_record(self, record: Record) -> dict:
