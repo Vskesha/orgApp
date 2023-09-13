@@ -12,14 +12,20 @@ d88' `88b `888""8P 888' `88b     .8' `888.     888' `88b  888' `88b
 ================== d"     YD ================= 888 ====== 888 ===== 
                    "Y88888P'                  o888o      o888o      
 </pre>
+With this app You can deal with your notes and contacts  
+Use `nbk` or `notebook` command to open your notebook manager.<br>
+Type `abk` or `addressbook` below to manage your contacts.<br>
+Also You are able to sort your files with `sorter`.<br>
+And if you are tired you can play simple games:<br>
+`tictactoe`, `bandergoose`, `hannoitower` or `snake`.<br>
 
-### to install `orgApp` package:
-
+### to install `orgApp` package run `pip install orgApp`:<br> 
+### or
 * clone this repository
 * browse in terminal to root folder which contain `setup.py`
 * use `pip install .` or `pip install -e .` command in terminal
 
-It will install `orgApp` python packages.
+It will install `orgApp` python package to your system.
 
 
 ### for running programs use:
@@ -36,7 +42,7 @@ It will install `orgApp` python packages.
 
 #### and commands `bandergoose` or `hannoitower` or `snake` or `tictactoe` to run relevant GUI game.
 
-#### Then follow printed instructions.
+
 ###
 
 [![Language](https://img.shields.io/badge/language-python-blue?&style=plastic)](https://www.python.org)
@@ -54,8 +60,16 @@ It will install `orgApp` python packages.
 ![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)
 
 
-**We used the following technologies and packages**
+- Technologies
+  -
+  - Python
+  - Git
+  - MarkDown
 
-- Python
-- Git
-- Packages: pathlib, sys, tkinter, pygame, prompt_toolkit
+- Packages: 
+  - 
+  - calendar, collections, colorama, datetime,
+  - functools, json, os, pygame, pathlib,
+  - prompt_toolkit, random, Faker,
+  - re, shutil, sys, textwrap, time
+  - tkinter, prompt_toolkit

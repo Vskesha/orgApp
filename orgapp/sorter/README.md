@@ -9,21 +9,23 @@ oo     .d8P 888   888  888       888 . 888    .o  888
 8""88888P'  `Y8bod8P' d888b      "888" `Y8bod8P' d888b    
 </pre>
 
+### To run this app use `sorter` command in terminal after installing `orgApp`.
+
+Follow the prompts and enter the desired command and arguments.
+
 This application may work as a discrete unit or can be 
 a part of a greater orgApp application.
 
 ### for sorting folder use:
 
-command `sorter path_to_folder` or
-
-`python3 -m sorter path_to_folder` in terminal
-
-after installing `sorter` package
+#### command `sorter path_to_folder` in terminal
 
 if `path_to_folder` is not given, current folder will be sorted
 
-functions in `sorter.py` recursively scans given 'folder' and:
-* adds all directories' paths to `FOLDERS`
-* adds files' paths to proper lists (`IMAGES`, `VIDEO`, `DOCS`, `MUSIC`, `ARCHIVES` or `MY_OTHER`)based on file extension
-* adds all encountered extensions to `KNOWN_EXTENSIONS` or `UNKNOWN_EXTENSIONS` according to `REGISTERED_EXTENSIONS`
-* sorts files in the given `path_to_folder` according to the `REGISTERED_EXTENSIONS` in `sorter/sorter.py`
+functions in `sorter.py`: 
+* recursively scans given `path_to_folder`:
+* collects all directories' paths to list `FOLDERS`
+* creates new subfolders (`IMAGES`, `VIDEO`, `DOCS`, `MUSIC`, `ARCHIVES` and `MY_OTHER`)
+* sorts files in the given `path_to_folder` according to the `REGISTERED_EXTENSIONS`
+<br>
+<br>

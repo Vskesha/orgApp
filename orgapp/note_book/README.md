@@ -18,6 +18,10 @@ o888o o888o `Y8bod8P'   "888" `Y8bod8P'
  `Y8bod8P' `Y8bod8P' `Y8bod8P' o888o o888o
 </pre>
 
+### To run this app use `notebook` or `abk` in terminal after installing `orgApp`.
+
+Follow the prompts and enter the desired command and arguments.
+
  Available commands:
 
 |           Commands             |     Action                             |
@@ -42,9 +46,28 @@ This application may work as a discrete unit or can be
 a part of a greater orgApp application.
 
 
-Simple example of using:
+### Simple example of using:
 
->>> add
-Enter note title: Love
-Enter note text: This is a wonderful and amazing feeling!
-Note added successfully.
+`>>> add<br>
+Enter note title: Love<br>
+Enter note text: This is a wonderful and amazing feeling!<br>
+Enter note tags: life happy<br>
+Note added successfully.<br>
+
+`>>> delete<br>
+Enter note title: Yesterday<br>
+Note deleted successfully.<br>
+
+`>>> all<br>
+ All notes:
+
+  1. Title: Today<br>
+     Content: Some text<br>
+     Tags: a, b, c
+
+
+  2. Title: Love<br>
+     Content: This is a wonderful and amazing feeling!<br>
+     Tags: life, happy<br>
+<br>
+<br>
