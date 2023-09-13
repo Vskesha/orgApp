@@ -47,22 +47,22 @@ COMMANDS = {
 }
 
 COMMAND_DESCRIPTIONS = {
-    'Додати адресу електронної пошти': ['add_email'],
-    'Додати номер телефону': ['add_phone'],
-    'Додати контакт': ['add'],
-    'Змінити адресу електронної пошти': ['change_email'],
-    'Змінити номер телефону': ['change_phone'],
-    'Дні до дня народження': ['when_birthday'],
-    'Вийти': ['exit'],
-    'Знайти контакт': ['find'],
-    'Вивести всі контакти': ['all'],
-    'Список іменнинників за N днів': ['get_list'],
-    'Завантажити з файлу': ['load'],
-    'Видалити адресу електронної пошти': ['remove_email'],
-    'Видалити номер телефону': ['remove_phone'],
-    'Видалити контакт': ['remove'],
-    'Зберегти до файлу': ['save'],
-    'Вивести цю довідку': ['help']
+    'add an email': ['add_email'],
+    'add a phone number': ['add_phone'],
+    'add contact to AdressBook ': ['add'],
+    'change an email ': ['change_email'],
+    'change phone number': ['change_phone'],
+    'return days until birthday': ['when_birthday'],
+    'exit from AdressBook ': ['exit'],
+    'find contact in AdressBook': ['find'],
+    'display all contacts': ['all'],
+    'return list of birthdays': ['get_list'],
+    'load information about contacts from file': ['load'],
+    'remove an email': ['remove_email'],
+    'remove phone number': ['remove_phone'],
+    'remove contact from AdressBook': ['remove'],
+    'save information about contacts to file': ['save'],
+    'display help': ['help']
 }
 
 FILE_PATH = Path.home() / "orgApp" / "address_book.json"  # for working on different filesystems
@@ -94,11 +94,11 @@ def print_command_list():
     This function formats the list of available commands and their descriptions
     in a user-friendly way for display.
     """
-    print(Fore.GREEN, "Доступні команди:")
-    separator = '|----------------------|-----------------------------------------|'
-    print(separator, f'\n|       Команди        |      Опис {" ":30}|\n', separator, sep='')
+    print(Fore.GREEN, "Available commands:")
+    separator = '|----------------------|--------------------------------------------|'
+    print(separator, f'\n|  Commands            |  Description {" ":30}|\n', separator, sep='')
     for description, commands in COMMAND_DESCRIPTIONS.items():
-        print(f"| {Fore.WHITE} {', '.join(commands):<20}{Fore.GREEN}| {description:<40}|")
+        print(f"| {Fore.WHITE} {', '.join(commands):<20}{Fore.GREEN}| {description:<43}|")
     print(separator, '\n')
 
 
@@ -153,32 +153,32 @@ def validate_input(prompt, validator=None, error_message=None, final_error_messa
 
 validation_info = {
     "name": {
-        "prompt": "Введіть ім'я контакту: ",
+        "prompt": "Enter a contact name: ",
         "validator": lambda x: Name(x).validate(x),
-        "error_message": "Недійсне ім'я. Будь ласка, використовуйте лише букви і більше однієї. Спробуйте знову!!!",
-        "final_error_message": "Спроби закінчилися при введенні імені.",
+        "error_message": "Invalid name. Please use only letters and more than one. Try again!!!",
+        "final_error_message": "Attempts ended when entering a name.",
         "transform_func": lambda x: x.lower().strip()
 
     },
     "phone": {
-        "prompt": "Введіть номер телефону (+380________): ",
+        "prompt": "Enter the phone number (+380________): ",
         "validator": lambda x: not x or Phone(x).validate(x),
-        "error_message": "Телефон не відповідає формату (+380________). Спробуйте ще раз!!!",
-        "final_error_message": "Спроби закінчилися при введенні телефону.",
+        "error_message": "The phone does not match the format (+380________). Try again!!!",
+        "final_error_message": "The attempts ended when the phone was entered.",
         "transform_func": lambda x: x.strip()
     },
     "email": {
-        "prompt": "Введіть електронну пошту у прийнятному форматі: ",
+        "prompt": "Enter an email in an acceptable format: ",
         "validator": lambda x: not x or Email(x).validate(x),
-        "error_message": "Формат пошти не прийнятyний. Спобуй знову!!!",
-        "final_error_message": "Спроби закінчилися при введенні електронної пошти.",
+        "error_message": "The mail format is not acceptable. Try again!!!",
+        "final_error_message": "Attempts ended when email was entered.",
         "transform_func": lambda x: x.strip()
     },
     "birthday": {
-        "prompt": "Введіть день народження контакту у форматі (дд.мм.рррр): ",
+        "prompt": "Enter the contact's birthday in the format (dd.mm.yyyy): ",
         "validator": lambda x: not x or Birthday(x).validate(x),
-        "error_message": "Формат дати народження має бути (дд.мм.рррр) або інша помилка. Спобуй знову!!!",
-        "final_error_message": "Спроби закінчилися при введенні дня народження.",
+        "error_message": "Date of birth format should be (dd.mm.yyyy) or another error. Try again!!!",
+        "final_error_message": "Attempts ended when birthday was entered.",
         "transform_func": lambda x: x.strip()
     },
     }
@@ -192,50 +192,56 @@ def handle_add_email(arg: str, address_book: AddressBook) -> str:
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я щоб додати пошту."
+        return "Failed to enter name to add mail."
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
         if contact.email:
-            return f"Адреса електронної пошти для {name} вже існує: {contact.email.value}"
+            return f"An email address for {name} already exists: {contact.email.value}"
         else:
-            print('Додати електронну пошту:')
+            print('Add email:')
             new_email = validate_input(**validation_info["email"])
             if contact.add_email(new_email):
-                return f"Адресу електронної пошти успішно додано. \n{address_book.get_all_records()}"
+                return f"Email added successfully. \n{address_book.get_all_records()}"
             else:
-                return "Електронна пошта не валідна."
+                return "Email is not valid."
     else:
-        return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+        return f"The contact with the name {name} was not found in the address book."
 
 
 def handle_add_phone_number(arg: str, address_book: AddressBook) -> str:
+    """
+    Command handler for 'add_phone' command. Adds phone
+    to a contact in the address book.
+    """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я щоб додати телефон."
+        return "Failed to enter name to add phone."
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
-        print('Додати телефон:')
+        print('Add phone:')
         new_phone = validate_input(**validation_info["phone"])
         if new_phone not in [record.value for record in contact.phones]:
             if contact.add_phone_number(new_phone):
-                return f"Номер телефону успішно додано. \n{address_book.get_all_records()}"
+                return f"Phone number successfully added. \n{address_book.get_all_records()}"
             else:
-                return "Номер не валідний."
+                return "The phone number is not valid."
         else:
-            return f"Номер {new_phone} не додано, бо він вже існує у контакта {name}!!!"
+            return f"The number {new_phone} has not been added because it already exists in the contact {name}!!!"
     else:
-        return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+        return f"The contact with the name {name} was not found in the address book."
 
 
 def handle_add_record(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'add_record' command. Adds a new contact to the address book.
+    Command handler for 'add' command. Adds a new contact to the address book.
     """
     name = validate_input(**validation_info["name"])
-    if name is None or name.lower().strip() in [record.name.value.lower().strip() for record in address_book.data.values()]:
-        return f"Не вдалося додати контакт!!!"
+    if name is None:
+        return f"Failed to add contact!!!"
+    if name.lower().strip() in [record.name.value.lower().strip() for record in address_book.data.values()]:
+        return f"A contact with that name already exists!!!"
     else:
         phone = validate_input(**validation_info["phone"])
         email = validate_input(**validation_info["email"])
@@ -248,9 +254,9 @@ def handle_add_record(arg: str, address_book: AddressBook) -> str:
     if email:
         new_record.email = Email(email)
     if address_book.add_record(new_record):
-        return f"Контакт успішно додано до адресної книги. \n{address_book.get_all_records()}"
+        return f"The contact has been successfully added to the address book. \n{address_book.get_all_records()}"
     else:
-        return "Дані не валідні."
+        return "The data is not valid."
 
 
 def handle_change_email(arg: str, address_book: AddressBook) -> str:
@@ -259,77 +265,77 @@ def handle_change_email(arg: str, address_book: AddressBook) -> str:
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не далося ввести ім'я щоб змінити електронну пошту."
+        return "Failed to enter name to change email."
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
-        print("Стара електронна пошта:")
+        print("The old email:")
         old_email = validate_input(**validation_info["email"])
         if not old_email:
-            return f'Cтара електронна пошта не введена або не валідна'
+            return f'The old email address was not entered or is not valid'
         else:
             if old_email != contact.email.value:
-                return f'Не вдалося змінити електронну пошту.' \
-                       f'Такої електронної пошти {old_email} у контакта {name} немає. \n{address_book.get_all_records()}'
+                return f'Unable to change the email address.' \
+                       f'There is no email address {old_email} in the contact {name}.\n{address_book.get_all_records()}'
             else:
-                 print("Нова електронна пошта:")
+                 print("The new email:")
                  new_email = validate_input(**validation_info["email"])
                  if new_email:
                     contact.change_email(old_email, new_email)
-                    return f"Адресу електронної пошти успішно змінено з {old_email} на {new_email}. \n{address_book.get_all_records()}"
+                    return f"The email has been successfully changed from {old_email} to {new_email}.\n{address_book.get_all_records()}"
                  else:
-                    return f'Нова електронна пошта не введена або не валідна'
+                    return f'New email is not entered or is not valid'
     else:
-        return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+        return f"The contact with the name {name} was not found in the address book."
 
 
 def handle_change_phone_number(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'change_phone_number' command. Changes the phone number of a contact.
+    Command handler for 'change_phone' command. Changes the phone number of a contact.
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я для зміни номера телефону контакту."
+        return "You failed to enter a name to change the contact's phone number."
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
-        print("Старий номер телефону:")
+        print("The old phone number:")
         old_phone = validate_input(**validation_info["phone"])
         if old_phone in [record.value for record in contact.phones]:
-            print("Новий номер телефону:")
+            print("The new phone number:")
             new_phone = validate_input(**validation_info["phone"])
             if new_phone:
                 if new_phone not in [record.value for record in contact.phones]:
                     contact.change_phone_number(old_phone, new_phone)
-                    return f"Номер телефону {old_phone} успішно змінено {new_phone}. \n{address_book.get_all_records()}"
+                    return f"The phone number {old_phone} has been successfully updated to {new_phone}.\n{address_book.get_all_records()}"
                 else:
-                    return f'Не вдалося замінити телефон {old_phone} на новий {new_phone}. Ви ввели такий же телефон'
+                    return f'Failed to replace the phone {old_phone} with the new one {new_phone}. You entered the same phone number.'
             else:
-                return 'Не вдалося замінити телефон на новий. Новий номер телефону відсутній або не валідний'
+                return 'Failed to replace the phone number with a new one. The new phone number is missing or not valid'
         else:
-            return 'Старий номер телефону відсутній у книзі або не валідний'
+            return 'The old phone number is not found in the address book or is not valid.'
     else:
-        return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+        return f"The contact with the name {name} was not found in the address book."
 
 
 def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     """
-     Command handler for 'days_to_birthday' command. Calculates the
+     Command handler for 'when_birthday' command. Calculates the
      days until the birthday of a contact
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я для того щоб дізнатися день народження контакту."
+        return "You failed to enter a name to find out the contact's birthday."
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
         if contact.birthday:
             days = contact.days_to_birthday()
-            return f"До дня народження для {name} залишилося {days} днів."
+            return f"Name {name} has {days} days left until their birthday."
         else:
-            return f"Для контакта {name} не вказана дата народження."
+            return f"The contact {name} does not have a birth date specified."
     else:
-        return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+        return f"Contact with the name {name} was not found in the address book."
 
 
 def handle_exit(arg: str, address_book: AddressBook) -> str:
@@ -341,36 +347,36 @@ def handle_exit(arg: str, address_book: AddressBook) -> str:
 
 def handle_find_records(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'find_records' command. Searches for contacts
+    Command handler for 'find' command. Searches for contacts
     in the address book based on user-specified criteria.
     """
     search_criteria = {}
-    print("За якими критеріями ви хочете здійснити пошук?\n1. Шукати за ім'ям\n2. Шукати за номером телефону")
-    search_option = input("Виберіть опцію (1 або 2): ")
+    print("What criteria would you like to search by?\n1. Search by name\n2. Search by phone number.")
+    search_option = input("Select an option (1 or 2): ")
     if search_option == "1":
-        search_name = input("Введіть ім'я для пошуку (мінімум 2 символи): ").strip().lower()
+        search_name = input("Enter a name to search for (minimum 2 characters): ").strip().lower()
         if len(search_name) >= 2:
             search_criteria['name'] = search_name
         else:
-            return "Ви ввели замало символів для імені. Пошук за іменем скасовано."
+            return "You entered too few characters for the name. Name search canceled."
     elif search_option == "2":
-        search_phones = input("Введіть частину номеру телефону для пошуку (мінімум 5 символів): ").strip()
+        search_phones = input("Please enter a part of the phone number for the search (minimum 5 characters): ").strip()
         if len(search_phones) >= 5:
             search_criteria['phones'] = search_phones
         else:
-            return "Ви ввели замало символів для номеру телефону. Пошук за номером телефону скасовано."
+            return "You entered too few characters for a phone number. Phone number search canceled."
     else:
-        return "Невірний вибір опції. Пошук скасовано."
+        return "Invalid option selected. Search canceled."
     results = address_book.find_records(**search_criteria)
     if results:
-        return f"Результати пошуку: \n{address_book.get_all_records()}"
+        return f"Search results: \n{address_book.get_all_records()}"
     else:
-        return "Контакт за вказаними критеріями не знайдений."
+        return "The contact meeting the specified criteria was not found."
 
 
 def handle_get_all_records(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'get_all_records' command. Retrieves and
+    Command handler for 'all' command. Retrieves and
     returns all records in the address book.
     """
     return address_book.get_all_records()
@@ -378,25 +384,19 @@ def handle_get_all_records(arg: str, address_book: AddressBook) -> str:
 
 def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'get_birthdays_per_week' command. Retrieves birthdays
+    Command handler for 'get_list' command. Retrieves birthdays
     for the specified number of days ahead.
     """
-    num_str = input("Введіть кількість днів: ")
+    num_str = input("Enter the number of days: ")
     if num_str.isdigit():
         num = int(num_str)
         birthdays_list = address_book.get_birthdays_per_week(num)
         if birthdays_list:
             return "\n".join(birthdays_list)
         else:
-            return "Немає іменинників."
+            return "No birthdays today."
     else:
-        return "Ви ввели не число. Попробуйте знову запустити команду!!!"
-
-
-def handle_help(arg: str, address_book: AddressBook) -> str:
-    """Outputs the command menu"""
-    print_command_list()
-    return ''
+        return "You entered a non-number. Please try running the command again!!!"
 
 
 def handle_load_from_file(arg: str, address_book: AddressBook) -> str:
@@ -421,68 +421,74 @@ def handle_remove_email(arg: str, address_book: AddressBook) -> str:
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я для видалення пошти!!!"
+        return "Failed to enter a name for email removal!!!"
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
-        print('Для видалення')
+        print('To delete')
         email_to_remove = validate_input(**validation_info["email"])
         if email_to_remove and email_to_remove != contact.email.value:
-            return f"Електронна пошта {email_to_remove} відсутня у контакту {name}!!!\n{address_book.get_all_records()}"
+            return f"The email {email_to_remove} is not present in the contact {name}!!!\n{address_book.get_all_records()}"
         if contact.remove_email(email_to_remove):
-            return f"Адресу електронної пошти {email_to_remove} успішно видалено. \n{address_book.get_all_records()}"
+            return f"The email {email_to_remove} has been successfully deleted. \n{address_book.get_all_records()}"
         else:
-            return "Не вдалося видалити електронну пошту."
+            return "Failed to delete the email."
     else:
-        return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+        return f"The contact with the name {name} was not found in the address book."
 
 
 def handle_remove_phone_number(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'remove_phone_number' command. Removes a phone
+    Command handler for 'remove_phone' command. Removes a phone
     number from a contact in the address book.
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я для видалення телефону!!!"
+        return "Failed to enter a name for phone number deletion!!!"
     else:
         contact = address_book.get_record_by_name(name)
     if contact is not None:
-        print('Для видалення')
+        print('To delete')
         phone_to_remove = validate_input(**validation_info["phone"])
         if phone_to_remove and phone_to_remove not in [phone.value for phone in contact.phones]:
-            return f"Номер телефону {phone_to_remove} відсутній у контакту {name}!!!\n{address_book.get_all_records()}"
+            return f"The phone number {phone_to_remove} is not found in the contact {name}!!!\n{address_book.get_all_records()}"
         if contact.remove_phone_number(phone_to_remove):
-            return f"Номер телефону {phone_to_remove} успішно видалено. \n{address_book.get_all_records()}"
+            return f"The phone number {phone_to_remove} has been successfully deleted.\n{address_book.get_all_records()}"
         else:
-            return "Не вдалося видалити номер телефону"
+            return "Failed to delete the phone number."
     else:
-        return f"Контакт з ім'ям {name} не знайдений в адресній книзі."
+        return f"The contact {name} was not found in the address book or the address book has not been created yet."
 
 
 def handle_remove_record(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'remove_record' command. Removes a contact from
+    Command handler for 'remove' command. Removes a contact from
     the address book.
     """
     name = validate_input(**validation_info["name"])
     if name is None:
-        return "Не вдалося ввести ім'я для видалення контакту!!!"
+        return "Could not enter name to delete contact!!!"
     if address_book.remove_record(name):
-        return f"Контакт {name} успішно видалено з адресної книги. \n{address_book.get_all_records()}"
+        return f"Contact {name} has been successfully removed from the address book. \n{address_book.get_all_records()}"
     else:
-        return f"Контакт {name} не знайдено в адресній книзі або ще не додано книги."
+        return f"The contact {name} is not found in the address book or the book has not yet been added."
+
+
+def handle_help(arg: str, address_book: AddressBook) -> str:
+    """Outputs the command menu"""
+    print_command_list()
+    return ''
 
 
 def handle_save_to_file(arg: str, address_book: AddressBook) -> str:
     """
-    Command handler for 'save_to_file' command. Saves the address
+    Command handler for 'save' command. Saves the address
     book data to a file.
     """
     FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
     file_handler = AddressBookFileHandler(str(FILE_PATH))
     file_handler.save_to_file(address_book)
-    return f"Адресну книгу збережено за шляхом {str(FILE_PATH)}"
+    return f"The address book has been saved at the following path {str(FILE_PATH)}"
 
 
 def input_error(func):
@@ -523,7 +529,7 @@ def main_cycle(address_book: AddressBook) -> bool:
     completer = NestedCompleter.from_nested_dict({command[0]: None for command in COMMANDS.values()})
     user_input = prompt('>>> ', completer=completer, lexer=RainbowLexer()).strip().lower()
     func, argument = command_parser(user_input)
-    result = func(argument, address_book)  # Передаємо адресну книгу як аргумент
+    result = func(argument, address_book)
     print(Fore.WHITE, result)
     return result.endswith('Goodbye!')
 
