@@ -492,10 +492,13 @@ class AddressBookFileHandler:
         Loads and deserializes an AddressBook from a file.
         """
         addressbook = AddressBook()
-        with open(self.file_name, 'r') as file:
-            records_data = json.load(file)
-            for contact_data in records_data.values():
-                addressbook.add_record(self._deserialize_record(contact_data))
+        try:
+            with open(self.file_name, 'r') as file:
+                records_data = json.load(file)
+                for contact_data in records_data.values():
+                    addressbook.add_record(self._deserialize_record(contact_data))
+        except FileNotFoundError:
+            pass
         return addressbook
 
     def _serialize_record(self, record: Record) -> dict:

@@ -119,6 +119,7 @@ def handle_load_notes(args: str) -> str:
 
 def handle_save_notes(args: str) -> str:
     """saves notes to file"""
+    FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
     NOTE_MANAGER.save_notes_to_json(str(FILE_PATH))
     return f"Notes saved to {str(FILE_PATH)}"
 

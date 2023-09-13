@@ -479,6 +479,7 @@ def handle_save_to_file(arg: str, address_book: AddressBook) -> str:
     Command handler for 'save_to_file' command. Saves the address
     book data to a file.
     """
+    FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
     file_handler = AddressBookFileHandler(str(FILE_PATH))
     file_handler.save_to_file(address_book)
     return f"Адресну книгу збережено за шляхом {str(FILE_PATH)}"
