@@ -21,7 +21,7 @@ And if you are tired you can play simple games:<br>
 
 ### to install `orgApp` package run `pip install orgApp`:<br> 
 ### or
-* clone this repository
+* clone this repository https://github.com/Vskesha/orgApp.git
 * browse in terminal to root folder which contain `setup.py`
 * use `pip install .` or `pip install -e .` command in terminal
 
