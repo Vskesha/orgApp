@@ -59,7 +59,7 @@ class Phone(Field):
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            return f'Номер телефону {new_value} не можна призначити, оскільки він не валідний'
+            return f'The phone number {new_value} cannot be assigned as it is not valid.'
 
     def validate(self, number: str) -> bool:
         """
@@ -93,7 +93,7 @@ class Email(Field):
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            return f'Пошту {new_value} не можна призначити, вона не валідна'
+            return f'The email {new_value} cannot be assigned as it is not valid.'
 
     def validate(self, email: str) -> bool:
         """
@@ -127,7 +127,7 @@ class Name(Field):
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            return f'Iм\'я {new_value} не можна призначити, воно не валідне'
+            return f'The name {new_value} cannot be assigned as it is not valid.'
 
     def validate(self, name: str) -> bool:
         """
@@ -159,7 +159,7 @@ class Birthday(Field):
         if self.validate(new_value):
             Field.value.fset(self, new_value)
         else:
-            return f'Дату дня народження {new_value} не можна призначити, оскільки вона не валідна'
+            return f'The date of birth {new_value} cannot be assigned as it is not valid.'
 
     def validate(self, new_value: str) -> bool:
         """
@@ -328,7 +328,7 @@ class AddressBook(UserDict):
                         found = True
                         break
         if not found:
-            print("Немає контакту, що відповідає заданим критеріям пошуку")
+            print("There is no contact that matches the specified search criteria.")
         return result
 
     def get_all_records(self) -> str:
@@ -337,7 +337,7 @@ class AddressBook(UserDict):
         book and returns them.
         """
         all_contacts = []
-        header = '{:<20} {:<30} {:<20} {:<20}'.format('Ім\'я', 'Телефон', 'День народження', 'Ел. пошта')
+        header = '{:<20} {:<30} {:<20} {:<20}'.format('Name', 'Phone', 'Birthday', 'Email')
         separator = '-' * len(header)
         all_contacts.append(header)
         all_contacts.append(separator)
@@ -355,7 +355,7 @@ class AddressBook(UserDict):
                 )
                 all_contacts.append(record_str)
         else:
-            all_contacts.append("Адресна книга порожня")
+            all_contacts.append("The address book is empty.")
         return '\n'.join(all_contacts)
 
     def get_birthdays_per_week(self, num: int) -> list:
@@ -373,7 +373,7 @@ class AddressBook(UserDict):
                 if birthdate.day == new_date.day and birthdate.month == new_date.month:
                     happy_birthday.append(record.name.value)
 
-        print(f'Cписок іменнинників, яких треба вітати через {num} дні(ів): {happy_birthday}')
+        print(f'List of birthday celebrants to greet in {num} day(s): {happy_birthday}')
         return happy_birthday
 
     def get_record_by_name(self, name: str) -> 'Record':
@@ -414,13 +414,13 @@ class AddressBook(UserDict):
             valid_email = True
 
         if not valid_phones:
-            print("Номери телефонів не валідні.")
+            print("Phone numbers are not valid.")
         if not valid_name:
-            print("Ім'я не валідне.")
+            print("Name is not valid.")
         if not valid_birthday:
-            print("Дата народження не валідна.")
+            print("Date of birth is not valid.")
         if not valid_email:
-            print("Пошта не валідна.")
+            print("Email is not valid.")
         return valid_phones and valid_name and valid_birthday and valid_email
 
     def iterator(self, n: int) -> Record:
