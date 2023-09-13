@@ -1,4 +1,4 @@
-from classes_ab import AddressBook, Record, AddressBookFileHandler, Phone, Email, Birthday, Name
+from .classes_ab import AddressBook, Record, AddressBookFileHandler, Phone, Email, Birthday, Name
 from functools import wraps
 from colorama import init as init_colorama, Fore, Style
 from prompt_toolkit.lexers import Lexer
@@ -68,6 +68,7 @@ COMMAND_DESCRIPTIONS = {
 FILE_PATH = Path.home() / "orgApp" / "address_book.json"  # for working on different filesystems
 FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
 
+
 class RainbowLexer(Lexer):
     """
     Lexer for rainbow syntax highlighting.
@@ -85,6 +86,7 @@ class RainbowLexer(Lexer):
             ]
 
         return get_line
+
 
 def print_command_list():
     """
@@ -148,6 +150,7 @@ def validate_input(prompt, validator=None, error_message=None, final_error_messa
         user_input = transform_func(user_input)
     return user_input
 
+
 validation_info = {
     "name": {
         "prompt": "Enter a contact name: ",
@@ -180,6 +183,7 @@ validation_info = {
     },
     }
 
+
 # Функції-обробники команд
 def handle_add_email(arg: str, address_book: AddressBook) -> str:
     """
@@ -204,6 +208,7 @@ def handle_add_email(arg: str, address_book: AddressBook) -> str:
     else:
         return f"The contact with the name {name} was not found in the address book."
 
+
 def handle_add_phone_number(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'add_phone' command. Adds phone
@@ -226,6 +231,7 @@ def handle_add_phone_number(arg: str, address_book: AddressBook) -> str:
             return f"The number {new_phone} has not been added because it already exists in the contact {name}!!!"
     else:
         return f"The contact with the name {name} was not found in the address book."
+
 
 def handle_add_record(arg: str, address_book: AddressBook) -> str:
     """
@@ -251,6 +257,7 @@ def handle_add_record(arg: str, address_book: AddressBook) -> str:
         return f"The contact has been successfully added to the address book. \n{address_book.get_all_records()}"
     else:
         return "The data is not valid."
+
 
 def handle_change_email(arg: str, address_book: AddressBook) -> str:
     """
@@ -281,6 +288,7 @@ def handle_change_email(arg: str, address_book: AddressBook) -> str:
     else:
         return f"The contact with the name {name} was not found in the address book."
 
+
 def handle_change_phone_number(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'change_phone' command. Changes the phone number of a contact.
@@ -309,6 +317,7 @@ def handle_change_phone_number(arg: str, address_book: AddressBook) -> str:
     else:
         return f"The contact with the name {name} was not found in the address book."
 
+
 def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     """
      Command handler for 'when_birthday' command. Calculates the
@@ -328,11 +337,13 @@ def handle_days_to_birthday(arg: str, address_book: AddressBook) -> str:
     else:
         return f"Contact with the name {name} was not found in the address book."
 
+
 def handle_exit(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'exit' command. Exits the address book application.
     """
-    return 'Goodbye!'
+    return handle_save_to_file(arg, address_book) + '\nGoodbye!'
+
 
 def handle_find_records(arg: str, address_book: AddressBook) -> str:
     """
@@ -362,12 +373,14 @@ def handle_find_records(arg: str, address_book: AddressBook) -> str:
     else:
         return "The contact meeting the specified criteria was not found."
 
+
 def handle_get_all_records(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'all' command. Retrieves and
     returns all records in the address book.
     """
     return address_book.get_all_records()
+
 
 def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
     """
@@ -384,6 +397,7 @@ def handle_get_birthdays_per_week(arg: str, address_book: AddressBook) -> str:
             return "No birthdays today."
     else:
         return "You entered a non-number. Please try running the command again!!!"
+
 
 def handle_load_from_file(arg: str, address_book: AddressBook) -> str:
     """
@@ -422,6 +436,7 @@ def handle_remove_email(arg: str, address_book: AddressBook) -> str:
     else:
         return f"The contact with the name {name} was not found in the address book."
 
+
 def handle_remove_phone_number(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'remove_phone' command. Removes a phone
@@ -444,6 +459,7 @@ def handle_remove_phone_number(arg: str, address_book: AddressBook) -> str:
     else:
         return f"The contact {name} was not found in the address book or the address book has not been created yet."
 
+
 def handle_remove_record(arg: str, address_book: AddressBook) -> str:
     """
     Command handler for 'remove' command. Removes a contact from
@@ -457,10 +473,12 @@ def handle_remove_record(arg: str, address_book: AddressBook) -> str:
     else:
         return f"The contact {name} is not found in the address book or the book has not yet been added."
 
+
 def handle_help(arg: str, address_book: AddressBook) -> str:
     """Outputs the command menu"""
     print_command_list()
     return ''
+
 
 def handle_save_to_file(arg: str, address_book: AddressBook) -> str:
     """
@@ -470,6 +488,7 @@ def handle_save_to_file(arg: str, address_book: AddressBook) -> str:
     file_handler = AddressBookFileHandler(str(FILE_PATH))
     file_handler.save_to_file(address_book)
     return f"The address book has been saved at the following path {str(FILE_PATH)}"
+
 
 def input_error(func):
     """
@@ -500,6 +519,7 @@ def input_error(func):
             print(Fore.RED, e)
     return wrapper
 
+
 @input_error
 def main_cycle(address_book: AddressBook) -> bool:
     """
@@ -512,6 +532,7 @@ def main_cycle(address_book: AddressBook) -> bool:
     print(Fore.WHITE, result)
     return result.endswith('Goodbye!')
 
+
 def prepare() -> None:
     """
     Prints initial information to the user
@@ -523,6 +544,7 @@ def prepare() -> None:
     print()
     print_command_list()
 
+
 def main():
     """
     Main entry point for the address book program.
@@ -530,7 +552,7 @@ def main():
     the environment, and enters the main program loop.
     """
     address_book = AddressBook()
-    handle_load_from_file('', address_book)
+    print(handle_load_from_file('', address_book))
     prepare()
 
     while True:
@@ -540,5 +562,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
