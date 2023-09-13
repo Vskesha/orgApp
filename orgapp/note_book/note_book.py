@@ -90,6 +90,17 @@ def handle_delete_note(args: str) -> str:
         return "Note not find."
 
 
+def handle_delete_tag_from_note(args: str) -> str:
+    """deletes tag from note in NoteBook"""
+    title = input("Enter note title: ")
+    tag = input("Enter tag: ")
+    result = NOTE_MANAGER.delete_tag_from_note(title, tag)
+    if result:
+        return "Tag deleted successfully."
+    else:
+        return "Note not find."
+
+
 def handle_edit_note(args: str) -> str:
     """edit a note content in the NoteBook"""
     title = input("Enter note title: ")
@@ -238,6 +249,7 @@ COMMANDS_LISTS = {
     handle_edit_note: ['edit'],
     handle_exit: ["bye", 'close', 'exit', 'goodbye'],
     handle_delete_note: ["delete"],
+    handle_delete_tag_from_note: ["delete_tag"],
     handle_find_by_tag: ['tag', "find_tag", 'search_tag'],
     handle_help: ['help'],
     handle_load_notes: ["load"],

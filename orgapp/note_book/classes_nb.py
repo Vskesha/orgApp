@@ -4,7 +4,7 @@ import json
 class Note:
     """Represents a note with a title and content."""
 
-    def __init__(self, title: str, content: str, tags: list = None):
+    def __init__(self, title: str, content: str, tags: set = None):
         """
         Initializes a new Note.
 
@@ -48,7 +48,7 @@ class Note:
 
     @tags.setter
     def tags(self, new_tags):
-        self.__tags = new_tags if new_tags else []
+        self.__tags = new_tags if new_tags else set()
 
 
 class NoteManager:
@@ -58,14 +58,14 @@ class NoteManager:
         """Initializes a new NoteManager with an empty list of notes."""
         self.notes = []
 
-    def add_note(self, title: str, content: str, tags: list = None) -> None:
+    def add_note(self, title: str, content: str, tags: set = None) -> None:
         """
         Adds a new note to the collection.
 
         Args:
             title (str): The title of the note.
             content (str): The content of the note.
-            tags(list[str]): list with tag words
+            tags(set(str)): list with tag words
         """
         note = Note(title, content, tags)
         self.notes.append(note)
@@ -87,7 +87,7 @@ class NoteManager:
         
         for note in self.notes:
             if note.title == title:
-                note.tags.append(tag)
+                note.tags.add(tag)
                 return True
         return False
 
@@ -104,6 +104,21 @@ class NoteManager:
                 self.notes.remove(note)
                 return True
         return False
+
+    def delete_tag_from_note(self, title: str, tag: str) -> bool:
+        """
+        Deletes tag from the note found by title.
+
+        Args:
+            title (str): The title of the note.
+            tag (str): The tag of the note.
+        """
+
+        for note in self.notes:
+            if note.title == title:
+                self.notes.tags.discard(tag)
+                return True
+        return False    
 
     def edit_note(self, title: str, content: str) -> bool:
         """
@@ -133,7 +148,7 @@ class NoteManager:
             with open(filename, "r", encoding="utf-8") as file:
                 data = json.load(file)
                 for note_data in data:
-                    new_note_book.add_note(note_data["title"], note_data["content"], note_data["tags"])
+                    new_note_book.add_note(note_data["title"], note_data["content"], set(note_data["tags"]))
         except (FileNotFoundError, KeyError):
             pass
 
