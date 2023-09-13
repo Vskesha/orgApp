@@ -48,7 +48,7 @@ class Note:
 
     @tags.setter
     def tags(self, new_tags):
-        self.__tags = new_tags if new_tags else set()
+        self.__tags = new_tags if len(new_tags) else set()
 
 
 class NoteManager:
@@ -116,7 +116,7 @@ class NoteManager:
 
         for note in self.notes:
             if note.title == title:
-                self.notes.tags.discard(tag)
+                note.tags.discard(tag)
                 return True
         return False    
 
@@ -173,7 +173,7 @@ class NoteManager:
         """
         data = []
         for note in self.notes:
-            data.append({"title": note.title, "content": note.content, "tags": note.tags})
+            data.append({"title": note.title, "content": note.content, "tags": list(note.tags)})
 
         with open(filename, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
