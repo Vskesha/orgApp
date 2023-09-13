@@ -1,4 +1,4 @@
-from setuptools import setup, find_namespace_packages
+from setuptools import setup
 
 setup(
     name="orgApp",
@@ -16,17 +16,16 @@ setup(
                  'ashabatig1992@gmail.com, '
                  'shnataliya77@gmail.com',
     license='MIT',
-    packages=find_namespace_packages(),
-    package_data={
-        "orgapp": ["*.md", "*.txt", "*.rst", "*.png"],
-        "orgapp.address_book": ["*.md", "*.txt", "*.rst", "*.png"],
-        "orgapp.bandergoose": ["*.md", "*.txt", "*.rst", "*.png"],
-        "orgapp.hannoitower": ["*.md", "*.txt", "*.rst", "*.png"],
-        "orgapp.note_book": ["*.md", "*.txt", "*.rst", "*.png"],
-        "orgapp.snake": ["*.md", "*.txt", "*.rst", "*.png"],
-        "orgapp.sorter": ["*.md", "*.txt", "*.rst", "*.png"],
-        "orgapp.tictactoe": ["*.md", "*.txt", "*.rst", "*.png"],
-    },
+    packages=[
+        "orgapp",
+        "orgapp.address_book",
+        "orgapp.bandergoose",
+        "orgapp.hannoitower",
+        "orgapp.note_book",
+        "orgapp.snake",
+        "orgapp.sorter",
+        "orgapp.tictactoe"
+    ],
     include_package_data=True,
     install_requires=[
         'markdown',
@@ -37,16 +36,18 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            "orgapp = main:main",
-            "addressbook = address_book.address_book:main",
-            "notebook = note_book.note_book:main",
-            "sorter = sorter.sorter:clean_folder",
+            "orgapp = orgapp.main:main",
+            "abk = orgapp.address_book.address_book:main",
+            "addressbook = orgapp.address_book.address_book:main",
+            "nbk = orgapp.note_book.note_book:main",
+            "notebook = orgapp.note_book.note_book:main",
+            "sorter = orgapp.sorter.sorter:clean_folder",
         ],
         'gui_scripts': [
-            "bandergoose = bandergoose.bandergoose:main",
-            "hannoitower = hannoitower.hannoitower:main",
-            "snake = snake.snake:main",
-            "tictactoe = tictactoe.tictactoe:main"
+            "bandergoose = orgapp.bandergoose.bandergoose:main",
+            "hannoitower = orgapp.hannoitower.hannoitower:main",
+            "snake = orgapp.snake.snake:main",
+            "tictactoe = orgapp.tictactoe.tictactoe:main"
         ]
     }
 )

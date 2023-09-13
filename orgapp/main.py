@@ -1,18 +1,15 @@
-import sys
-sys.path.extend(['sorter', 'note_book', 'address_book', 'tictactoe',
-                 'bandergoose', 'snake', 'hannoitower'])
-from address_book import main as address_main
-from bandergoose import main as bandergoose_main
+from .address_book import main as address_main
+from .bandergoose import main as bandergoose_main
+from .hannoitower import main as hannoi_main
+from .note_book import main as note_main
+from .sorter import clean_folder
+from .snake import main as snake_main
+from .tictactoe import main as tictactoe_main
 from colorama import init as init_colorama, Fore, Back, Style
-from hannoitower import main as hannoi_main
-from note_book import main as note_main
 from prompt_toolkit.lexers import Lexer
 from prompt_toolkit.styles.named_colors import NAMED_COLORS
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
-from sorter import clean_folder
-from snake import main as snake_main
-from tictactoe import main as tictactoe_main
 
 
 COMMAND_COLOR = Fore.WHITE
@@ -33,16 +30,16 @@ d88' `88b `888""8P 888' `88b     .8' `888.     888' `88b  888' `88b
 
 def close_program() -> str:
     print(f'{Fore.GREEN}Goodbye!')
-    return 'exit'
+    return 'exiting'
 
 
 COMMANDS = {
-    'ab': address_main,
+    'abk': address_main,
     'addressbook': address_main,
     'bandergoose': bandergoose_main,
     'exit': close_program,
     'hannoitower': hannoi_main,
-    'note': note_main,
+    'nbk': note_main,
     'notebook': note_main,
     'quit': close_program,
     'sorter': clean_folder,
@@ -72,7 +69,7 @@ def main():
         print_menu()
         try:
             subprogram = COMMANDS[get_command()]
-            if subprogram() == 'exit':
+            if subprogram() == 'exiting':
                 break
         except Exception:
             print('Something wrong. Sorry ...')
@@ -86,9 +83,9 @@ def print_menu():
     print(f'{Fore.CYAN}{"":>35}YOUR FAVORITE ORGANIZER PROGRAM\n')
     print(Style.BRIGHT)
     print(TEXT_COLOR + 'With this app You can deal with your notes and contacts')
-    print(f'Use {COMMAND_COLOR}note {TEXT_COLOR}or {COMMAND_COLOR}notebook '
+    print(f'Use {COMMAND_COLOR}nbk {TEXT_COLOR}or {COMMAND_COLOR}notebook '
           f'{TEXT_COLOR}command to open your notebook manager.')
-    print(f'Type {COMMAND_COLOR}ab {TEXT_COLOR}or {COMMAND_COLOR}addressbook '
+    print(f'Type {COMMAND_COLOR}abk {TEXT_COLOR}or {COMMAND_COLOR}addressbook '
           f'{TEXT_COLOR}below to manage your contacts.')
     print(f'Also You are able to sort your files with {COMMAND_COLOR}sorter.')
     print(f'{TEXT_COLOR}And if you are tired you can play simple games:')

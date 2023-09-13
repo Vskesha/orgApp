@@ -16,22 +16,21 @@ d88' `88b `888""8P 888' `88b     .8' `888.     888' `88b  888' `88b
 ### to install `orgApp` package:
 
 * clone this repository
-* browse in terminal to root folder which contain `pyproject.toml`
+* browse in terminal to root folder which contain `setup.py`
 * use `pip install .` or `pip install -e .` command in terminal
 
-It will install next python packages: `orgapp`,  `address_book`, `note_book`,
-`sorter`, `bandergoose`, `hannoitower`, `snake`, `tictactoe`.
+It will install `orgApp` python packages.
 
 
-### for running program use:
+### for running programs use:
 
 #### Use next commands in terminal anywhere:
 
 #### command `orgapp` to run main 'orgApp' application.
 
-#### command `addressbook` to run 'adress_book' application.
+#### command `abk` or `addressbook` to run 'adress_book' application.
 
-#### command `notebook` to run main 'note_book;' application.
+#### command `nbk` or `notebook` to run main 'note_book' manager.
 
 #### command `sorter` to run 'sorter' application.
 

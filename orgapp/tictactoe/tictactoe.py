@@ -352,7 +352,7 @@ class TicTacToe(tkinter.Canvas):
 def main():
     window = tkinter.Tk()
     window.title('Хрестики-Нyлики')
-    game = TicTacToe(window, 450)
+    game = TicTacToe(window, 600)
     game.pack()
     game.draw_menu()
     window.mainloop()

@@ -191,8 +191,8 @@ def clean_folder():
 
 def prepare():
     init_colorama()
-    print(Fore.BLUE + Back.BLACK + Style.BRIGHT + SORTER_LOGO)
-    print("                     Welcome to your sorting app!")
+    print(Fore.BLUE + Style.BRIGHT + SORTER_LOGO)
+    print(f" {Fore.CYAN}                    Welcome to your sorting app!")
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-from classes_nb import NoteManager
+from .classes_nb import NoteManager
 from colorama import init as init_colorama, Fore, Back, Style
 from functools import wraps
 from pathlib import Path
@@ -130,6 +130,7 @@ def handle_load_notes(args: str) -> str:
 
 def handle_save_notes(args: str) -> str:
     """saves notes to file"""
+    FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
     NOTE_MANAGER.save_notes_to_json(str(FILE_PATH))
     return f"Notes saved to {str(FILE_PATH)}"
 
@@ -139,7 +140,7 @@ def handle_find_by_tag(args: str) -> str:
     tag = args.split()[0] if args else input("Enter a tag to search: ")
     search_results = NOTE_MANAGER.search_by_tag(tag)
     if search_results:
-        result_str = "Search results:\n"
+        result_str = "Search results:\n\n"
         result_str += NoteManager.string_from_list(search_results)
         return result_str
     else:
@@ -151,7 +152,7 @@ def handle_search_notes(args: str) -> str:
     keyword = args[0] if args else input("Enter a keyword to search: ")
     search_results = NOTE_MANAGER.search_notes(keyword)
     if search_results:
-        result_str = "Search results:\n"
+        result_str = "Search results:\n\n"
         result_str += NoteManager.string_from_list(search_results)
         return result_str
     else:
@@ -162,7 +163,7 @@ def handle_view_all_notes(args: str) -> str:
     """displays all notes."""
     all_notes = NOTE_MANAGER.get_all_notes()
     if all_notes:
-        result_str = "All notes:\n"
+        result_str = "All notes:\n\n"
         result_str += NoteManager.string_from_list(all_notes)
         return result_str
     else:
@@ -209,7 +210,7 @@ def main_cycle() -> bool:
     user_input = prompt('>>> ', completer=completer, lexer=RainbowLexer())
     func, argument = command_parser(user_input)
     result = func(argument)
-    print(Fore.LIGHTYELLOW_EX, result)
+    print(Fore.WHITE, result)
     return result.endswith('Goodbye!')
 
 
