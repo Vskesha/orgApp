@@ -62,7 +62,7 @@ def handle_add_note(args: str) -> str:
         raise ValueError(f'Note with title "{title}" already exist')
     content = input("Enter note text: ")
     tags = input("Enter note tags: ")
-    NOTE_MANAGER.add_note(title, content, tags.split())
+    NOTE_MANAGER.add_note(title, content, set(tags.split()))
     return "Note added successfully."
 
 
@@ -113,11 +113,11 @@ def handle_exit(args: str) -> str:
 
 
 def handle_fill_with_random_notes(args: str) -> str:
-    """adds random data to the notebook"""
+    """adds fdke data to the notebook"""
     count_notes = int(input("Enter the number of notes: "))
     faker = Faker()
     for i in range(count_notes):
-        NOTE_MANAGER.add_note(title=faker.name(), content=faker.sentence(nb_words=15), tags={' '.join(faker.words(2 + i % 2))})
+        NOTE_MANAGER.add_note(title=faker.name(), content=faker.sentence(nb_words=15), tags=set(faker.words(2 + i % 2)))
     return "Random notes added successfully."     
 
 
@@ -253,7 +253,7 @@ def print_menu():
 COMMANDS_LISTS = {
     handle_add_note: ["add", 'plus'],
     handle_add_tags: ["add_tags"],
-    handle_fill_with_random_notes: ["add_random_notes"],
+    handle_fill_with_random_notes: ["add_fake_notes"],
     handle_view_all_notes: ['all', 'all_notes', 'view'],
     handle_edit_note: ['edit'],
     handle_exit: ["bye", 'close', 'exit', 'goodbye'],
