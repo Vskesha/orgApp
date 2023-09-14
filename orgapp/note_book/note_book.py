@@ -75,42 +75,36 @@ def handle_add_tags(agrs: str) -> str:
     result = False
     for tag in tags:
         result = NOTE_MANAGER.add_tag_to_note(title, tag)
-    if result:
-        return "Tags added successfully."
-    else:
-        return "Tags not added."
-
+    return "Tags added successfully."
+    
 
 def handle_delete_note(args: str) -> str:
     """deletes note from NoteBook"""
     title = input("Enter note title: ")
-    result = NOTE_MANAGER.delete_note(title)
-    if result:
-        return "Note deleted successfully."
-    else:
-        return "Note not find."
+    if title not in NOTE_MANAGER.get_titles():
+        raise KeyError(f'Note with title "{title}" not found')
+    NOTE_MANAGER.delete_note(title)
+    return "Note deleted successfully."
 
 
 def handle_delete_tag_from_note(args: str) -> str:
     """deletes tag from note in NoteBook"""
     title = input("Enter note title: ")
+    if title not in NOTE_MANAGER.get_titles():
+        raise KeyError(f'Note with title "{title}" not found')
     tag = input("Enter tag: ")
-    result = NOTE_MANAGER.delete_tag_from_note(title, tag)
-    if result:
-        return "Tag deleted successfully."
-    else:
-        return "Note not find."
+    NOTE_MANAGER.delete_tag_from_note(title, tag)
+    return "Tag deleted successfully."
 
 
 def handle_edit_note(args: str) -> str:
     """edit a note content in the NoteBook"""
     title = input("Enter note title: ")
+    if title not in NOTE_MANAGER.get_titles():
+        raise KeyError(f'Note with title "{title}" not found')
     content = input("Enter new note text: ")
-    result = NOTE_MANAGER.edit_note(title, content)
-    if result:
-        return "Note edited successfully."
-    else:
-        return "Note not find."
+    NOTE_MANAGER.edit_note(title, content)
+    return "Note edited successfully."
 
 
 def handle_exit(args: str) -> str:
@@ -123,7 +117,7 @@ def handle_fill_with_random_notes(args: str) -> str:
     count_notes = int(input("Enter the number of notes: "))
     faker = Faker()
     for i in range(count_notes):
-        NOTE_MANAGER.add_note(title=faker.name(), content=faker.address(), tags={"tag" + str(i + 1)})
+        NOTE_MANAGER.add_note(title=faker.name(), content=faker.sentence(nb_words=15), tags={' '.join(faker.words(2 + i % 2))})
     return "Random notes added successfully."     
 
 

@@ -88,8 +88,7 @@ class NoteManager:
         for note in self.notes:
             if note.title == title:
                 note.tags.add(tag)
-                return True
-        return False
+
 
     def delete_note(self, title: str) -> bool:
         """
@@ -102,8 +101,7 @@ class NoteManager:
         for note in self.notes:
             if note.title == title:
                 self.notes.remove(note)
-                return True
-        return False
+
 
     def delete_tag_from_note(self, title: str, tag: str) -> bool:
         """
@@ -117,8 +115,7 @@ class NoteManager:
         for note in self.notes:
             if note.title == title:
                 note.tags.discard(tag)
-                return True
-        return False    
+   
 
     def edit_note(self, title: str, content: str) -> bool:
         """
@@ -132,8 +129,7 @@ class NoteManager:
         for note in self.notes:
             if note.title == title:
                 note.content = content
-                return True
-        return False
+
 
     @classmethod
     def load_notes_from_json(cls, filename: str):
