@@ -1,0 +1,5 @@
+colorama==0.4.6
+prompt-toolkit==3.0.39
+pygame==2.5.1
+wcwidth==0.2.6
+Faker==19.6.1 

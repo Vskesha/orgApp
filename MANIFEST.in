@@ -1,0 +1,10 @@
+include orgapp/*.md
+include orgapp/address_book/*.md
+include orgapp/bandergoose/*.png
+include orgapp/hannoitower/*.md
+include orgapp/note_book/*.md
+include orgapp/snake/*.md
+include orgapp/sorter/*.md
+include orgapp/tictactoe/*.md
+include README.md
+include LICENSE
