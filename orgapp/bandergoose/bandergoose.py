@@ -32,8 +32,10 @@ def create_bonus():
 
 def main():
     pygame.init()
+    print('.', end='')
     FONT = pygame.font.SysFont('Verdana', 25)
     GAME_OVER_FONT = pygame.font.SysFont('Verdana_bold', 200)
+    print('.', end='')
     main_display = pygame.display.set_mode((WIDTH, HEIGHT))
     bg_image = pygame.image.load('orgapp/bandergoose/background.png')
     bg = pygame.transform.scale(bg_image, (WIDTH, HEIGHT))

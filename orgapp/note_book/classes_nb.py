@@ -74,7 +74,10 @@ class NoteManager:
         """
         Extends self.notes with notes from other NoteManager object
         """
-        self.notes.extend(other.notes)
+        titles = set(note.title for note in self.notes)
+        for note in other.notes:
+            if note.title not in titles:
+                self.notes.append(note)
 
     def add_tag_to_note(self, title: str, tag: str) -> bool:
         """
