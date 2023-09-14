@@ -28,14 +28,18 @@ Follow the prompts and enter the desired command and arguments.
 |:-------------------------------|:---------------------------------------|
 |  add, plus                     | adds note to your NoteBook             |
 |  add_tag                       | add tag to note                        |
+|  add_random_notes              | adds random data to the notebook       |
 |  all, all_notes, view          | displays all notes.                    |
 |  edit                          | edit a note content in the NoteBook    |
 |  bye, close, exit, goodbye     | exits the program                      |
 |  delete                        | deletes note from NoteBook             |
+|  delete_tag                    | deletes tag from note in NoteBook      |
+|  tag, find_tag, search_tag     | returns notes with given tags          |
+|  help                          | outputs this list of commands          |
 |  load                          | loads notes from the given file        |
 |  save                          | saves notes to file                    |
 |  find, search                  | returns notes with given keyword       |
-|  find_tag, search_tag          | returns notes with given tags          |
+
 
 This is a simple console bot for managing notebook
 Enter one of the listed commands followed by arguments

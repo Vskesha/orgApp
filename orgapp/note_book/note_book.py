@@ -6,6 +6,7 @@ from prompt_toolkit.lexers import Lexer
 from prompt_toolkit.styles.named_colors import NAMED_COLORS
 from prompt_toolkit.completion import NestedCompleter
 from prompt_toolkit import prompt
+from faker import Faker
 
 
 FILE_PATH = Path.home() / "orgApp" / "notes.json"  # for working on different filesystems
@@ -74,25 +75,33 @@ def handle_add_tags(agrs: str) -> str:
     result = False
     for tag in tags:
         result = NOTE_MANAGER.add_tag_to_note(title, tag)
-    if result:
-        return "Tags added successfully."
-    else:
-        return "Tags not added"
-
+    return "Tags added successfully."
+    
 
 def handle_delete_note(args: str) -> str:
     """deletes note from NoteBook"""
     title = input("Enter note title: ")
-    result = NOTE_MANAGER.delete_note(title)
-    if result:
-        return "Note deleted successfully."
-    else:
-        return "Note not find."
+    if title not in NOTE_MANAGER.get_titles():
+        raise KeyError(f'Note with title "{title}" not found')
+    NOTE_MANAGER.delete_note(title)
+    return "Note deleted successfully."
+
+
+def handle_delete_tag_from_note(args: str) -> str:
+    """deletes tag from note in NoteBook"""
+    title = input("Enter note title: ")
+    if title not in NOTE_MANAGER.get_titles():
+        raise KeyError(f'Note with title "{title}" not found')
+    tag = input("Enter tag: ")
+    NOTE_MANAGER.delete_tag_from_note(title, tag)
+    return "Tag deleted successfully."
 
 
 def handle_edit_note(args: str) -> str:
     """edit a note content in the NoteBook"""
     title = input("Enter note title: ")
+    if title not in NOTE_MANAGER.get_titles():
+        raise KeyError(f'Note with title "{title}" not found')
     content = input("Enter new note text: ")
     NOTE_MANAGER.edit_note(title, content)
     return "Note edited successfully."
@@ -101,6 +110,15 @@ def handle_edit_note(args: str) -> str:
 def handle_exit(args: str) -> str:
     """exits the program"""
     return handle_save_notes("") + "\nGoodbye!"
+
+
+def handle_fill_with_random_notes(args: str) -> str:
+    """adds random data to the notebook"""
+    count_notes = int(input("Enter the number of notes: "))
+    faker = Faker()
+    for i in range(count_notes):
+        NOTE_MANAGER.add_note(title=faker.name(), content=faker.sentence(nb_words=15), tags={' '.join(faker.words(2 + i % 2))})
+    return "Random notes added successfully."     
 
 
 def handle_help(args: str) -> str:
@@ -235,10 +253,12 @@ def print_menu():
 COMMANDS_LISTS = {
     handle_add_note: ["add", 'plus'],
     handle_add_tags: ["add_tags"],
+    handle_fill_with_random_notes: ["add_random_notes"],
     handle_view_all_notes: ['all', 'all_notes', 'view'],
     handle_edit_note: ['edit'],
     handle_exit: ["bye", 'close', 'exit', 'goodbye'],
     handle_delete_note: ["delete"],
+    handle_delete_tag_from_note: ["delete_tag"],
     handle_find_by_tag: ['tag', "find_tag", 'search_tag'],
     handle_help: ['help'],
     handle_load_notes: ["load"],
