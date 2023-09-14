@@ -25,24 +25,25 @@ Follow the prompts and enter the desired command and arguments.
 
  Available commands:
 
-|           Commands             | Action                                    |
-|:-------------------------------|:------------------------------------------|
-|  add                           | add contact to AdressBook                 |
-|  add_email                     | add an email                              |
-|  add_phone                     | add phone number                          |
-|  all                           | display all contacts                      |
-|  change_email                  | change an email                           |
-|  change_phone                  | change phone number                       |
-|  exit                          | exit from AdressBook                      |
-|  find                          | find contact in AdressBook                |
-|  get_list                      | return list of birthdays                  |
-|  load                          | load information about contacts from file |
-|  remove_email                  | remove email address                      |
-|  remove_phone                  | remove phone number                       |
-|  remove_email                  | remove contact from AdressBook            |
-|  remove_email                  | save information about contacts to file   |
-|  when_birthday                 | return days until birthday                |
-|  help                          | display help                              |
+| Commands             | Description                                |
+|:---------------------|:-------------------------------------------|
+| add_email            | add an email                               |
+| add_phone            | add a phone number                         |
+| add                  | add contact to AdressBook                  |
+| change_email         | change an email                            |
+| change_phone         | change phone number                        |
+| when_birthday        | return days until birthday                 |
+| exit                 | exit from AdressBook                       |
+| find                 | find contact in AdressBook                 |
+| all                  | display all contacts                       |
+| get_list             | return list of birthdays                   |
+| load                 | load information about contacts from file  |
+| remove_email         | remove an email                            |
+| remove_phone         | remove phone number                        |
+| remove               | remove contact from AdressBook             |
+| save                 | save information about contacts to file    |
+| help                 | display help                               |
+
 
 
 This application may be used as a standalone unit for managing your address book 
