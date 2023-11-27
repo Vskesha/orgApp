@@ -2,6 +2,7 @@ import os
 import random
 import pygame
 from pygame.constants import QUIT, K_DOWN, K_UP, K_LEFT, K_RIGHT
+from pathlib import Path
 
 
 HEIGHT = 700
@@ -11,11 +12,12 @@ COLOR_BLACK = (0, 0, 0)
 COLOR_BLUE = (0, 0, 255)
 COLOR_GREEN = (0, 255, 0)
 COLOR_RED = (255, 0, 0)
-PLAYER_IMAGES = [f'orgapp/bandergoose/1-{i}.png' for i in range(1, 6)]
+CURR_DIR = f'{Path(__file__).parent.resolve()}'
+PLAYER_IMAGES = [f'{CURR_DIR}/1-{i}.png' for i in range(1, 6)]
 
 
 def create_enemy():
-    enemy = pygame.image.load('orgapp/bandergoose/enemy.png').convert_alpha()
+    enemy = pygame.image.load(f'{CURR_DIR}/enemy.png').convert_alpha()
     enemy_size = (enemy.get_width(), enemy.get_height())
     enemy_rect = pygame.Rect(WIDTH, random.randint(enemy_size[1], HEIGHT-2*enemy_size[1]), *enemy_size)
     enemy_move = [random.randint(-8, -4), 0]
@@ -23,7 +25,7 @@ def create_enemy():
 
 
 def create_bonus():
-    bonus = pygame.image.load('orgapp/bandergoose/bonus.png').convert_alpha()
+    bonus = pygame.image.load(f'{CURR_DIR}/bonus.png').convert_alpha()
     bonus_size = (bonus.get_width(), bonus.get_height())
     bonus_rect = pygame.Rect(random.randint(bonus_size[0], WIDTH-2*bonus_size[0]), -bonus_size[1], *bonus_size)
     bonus_move = [0, random.randint(4, 8)]
@@ -38,12 +40,12 @@ def main():
     GAME_OVER_FONT = pygame.font.SysFont('Verdana_bold', 200)
     print('af')
     main_display = pygame.display.set_mode((WIDTH, HEIGHT))
-    bg_image = pygame.image.load('orgapp/bandergoose/background.png')
+    bg_image = pygame.image.load(f'{CURR_DIR}/background.png')
     bg = pygame.transform.scale(bg_image, (WIDTH, HEIGHT))
     bg_x1, bg_x2 = 0, bg.get_width()
     bg_move = 3
 
-    player = pygame.image.load('orgapp/bandergoose/player.png').convert_alpha()
+    player = pygame.image.load(f'{CURR_DIR}/player.png').convert_alpha()
     player_size = (player.get_width(), player.get_height())
     player_rect = pygame.Rect(0, (HEIGHT - player_size[1]) // 2, *player_size)
     player_move_down = [0, 5]
@@ -109,7 +111,7 @@ def main():
             enemy[1] = enemy[1].move(enemy[2])
             if player_rect.colliderect(enemy[1]):
                 playing = False
-                explosion = pygame.image.load('orgapp/bandergoose/explosion.png').convert_alpha()
+                explosion = pygame.image.load(f'{CURR_DIR}/explosion.png').convert_alpha()
                 enemy[1] = enemy[1].move(-150,-150)
                 main_display.blit(explosion, enemy[1])
             else:
