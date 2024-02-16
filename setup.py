@@ -11,7 +11,7 @@ long_description += (this_directory / 'orgapp' / 'sorter' / 'README.md').read_te
 
 setup(
     name="orgApp",
-    version='0.0.2',
+    version='0.0.3',
     description="personal organizing tool",
     long_description=long_description,
     long_description_content_type='text/markdown',
